@@ -1,6 +1,8 @@
 import { createApp } from "vue";
 // app
 import App from "./App.vue";
+import "@unocss/reset/normalize.css";
+import "virtual:uno.css";
 import routes from "./routes";
 import { createPinia } from "pinia";
 

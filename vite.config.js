@@ -5,6 +5,7 @@ import vueSFC from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import UnoCSS from "unocss/vite";
 
 // config
 export default defineConfig(({ command, mode }) => {
@@ -20,6 +21,7 @@ export default defineConfig(({ command, mode }) => {
     base: "",
     // 需要用到的插件数组
     plugins: [
+      UnoCSS(),
       // .vue 单文件组件
       vueSFC(),
       // .jsx 文件类型支持
