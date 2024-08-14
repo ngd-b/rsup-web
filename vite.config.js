@@ -6,6 +6,7 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import UnoCSS from "unocss/vite";
+import ElementPlus from "unplugin-element-plus/vite";
 
 // config
 export default defineConfig(({ command, mode }) => {
@@ -34,6 +35,7 @@ export default defineConfig(({ command, mode }) => {
       Components({
         resolvers: [ElementPlusResolver()],
       }),
+      ElementPlus(),
     ],
     // 静态资源服务目录地址
     publicDir: "",
