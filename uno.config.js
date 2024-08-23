@@ -8,6 +8,7 @@ import {
   transformerDirectives,
   transformerVariantGroup,
 } from "unocss";
+import presetRemToPx from "@unocss/preset-rem-to-px";
 
 export default defineConfig({
   shortcuts: [
@@ -18,6 +19,15 @@ export default defineConfig({
       // ...
     },
   },
+  rules: [
+    [
+      "flex-center",
+      {
+        "justify-content": "center",
+        "align-items": "center",
+      },
+    ],
+  ],
   presets: [
     presetUno(),
     presetAttributify(),
@@ -28,6 +38,7 @@ export default defineConfig({
         // ...
       },
     }),
+    presetRemToPx({ baseFontSize: 4 }),
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
 });

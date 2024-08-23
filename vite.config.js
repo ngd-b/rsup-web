@@ -1,4 +1,5 @@
 // 类型提示
+import path from "path";
 import { defineConfig } from "vite";
 import vueJSX from "@vitejs/plugin-vue-jsx";
 import vueSFC from "@vitejs/plugin-vue";
@@ -7,6 +8,8 @@ import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import UnoCSS from "unocss/vite";
 import ElementPlus from "unplugin-element-plus/vite";
+import Icons from "unplugin-icons/vite";
+import IconsResolver from "unplugin-icons/resolver";
 
 // config
 export default defineConfig(({ command, mode }) => {
@@ -30,10 +33,27 @@ export default defineConfig(({ command, mode }) => {
         // ... @vue/babel-plugin-jsx 的配置
       }),
       AutoImport({
-        resolvers: [ElementPlusResolver()],
+        // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
+        imports: ["vue"],
+        resolvers: [
+          ElementPlusResolver(),
+          // 自动导入图标组件
+          IconsResolver({
+            prefix: "Icon",
+          }),
+        ],
       }),
       Components({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [
+          // 自动注册图标组件
+          IconsResolver({
+            enabledCollections: ["ep"],
+          }),
+          ElementPlusResolver(),
+        ],
+      }),
+      Icons({
+        autoInstall: true,
       }),
       ElementPlus(),
     ],
@@ -78,7 +98,7 @@ export default defineConfig(({ command, mode }) => {
     // 开发服务器选项
     server: {
       // ...
-      host: "127.0.0.1",
+      host: "0.0.0.0",
       port: "8081",
       // 项目启动后自动打开浏览器
       open: true,

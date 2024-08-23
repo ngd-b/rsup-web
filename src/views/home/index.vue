@@ -8,48 +8,46 @@
     </div>
 
     <div class="version-list">
-      <h3>dependencies</h3>
-      <div
-        class="version-item"
-        v-for="name in formatValues(dependencies)"
-        :key="name"
+      <template
+        :key="index"
+        v-for="(dep, index) in [dependencies, devDependencies]"
       >
-        <div class="name">{{ name }}</div>
+        <h3>{{ index ? "devDependencies" : "dependencies" }}</h3>
+        <div
+          class="version-item mb-10"
+          v-for="info in formatValues(dep)"
+          :key="info.name"
+        >
+          <div class="flex gap-10 flex-items-center">
+            <i
+              v-if="!info.is_finish"
+              class="is-loading flex-inline flex-justify-center"
+            >
+              <i-ep-loading />
+            </i>
+            <i
+              v-else
+              class="flex-inline flex-justify-center flex-items-center color-blue"
+            >
+              <i-ep-check />
+            </i>
 
-        <div
-          class="version"
-          v-for="info in dependencies[name].versions"
-          :key="info.version"
-        >
-          <el-tag type="success">{{ info.version }}</el-tag>
+            <span>{{ info.name }}</span>
+            <el-tag type="primary">{{ info.version }}</el-tag>
+          </div>
+          <div class="mt-10 flex flex-wrap gap-10">
+            <div v-for="v in formatValues(info.versions)" :key="v.version">
+              <el-tag type="success">{{ v.version }}</el-tag>
+            </div>
+          </div>
         </div>
-      </div>
-      <h3>devDependencies</h3>
-      <div
-        class="version-item"
-        v-for="info in formatValues(devDependencies)"
-        :key="info.name"
-      >
-        <div class="name">
-          <span>{{ info.name }}</span>
-          <el-tag type="primary">{{ info.version }}</el-tag>
-        </div>
-        <div
-          class="version"
-          v-for="v in formatValues(info.versions)"
-          :key="v.version"
-        >
-          <el-tag type="success">{{ v.version }}</el-tag>
-        </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
 <script setup>
 import { useAppStore } from "@/stores/index.js";
-import { computed, onMounted } from "vue";
 import Socket from "@/stores/socket.js";
-import { ElMessage } from "element-plus";
 
 const appStore = useAppStore();
 

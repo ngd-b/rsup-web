@@ -17,7 +17,9 @@
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@eslint/js": "^9.8.0",
+    "@iconify-json/ep": "^1.1.16",
     "@unocss/eslint-config": "^0.61.9",
+    "@unocss/preset-rem-to-px": "^0.62.2",
     "@unocss/reset": "^0.61.9",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.1.0",
@@ -29,9 +31,11 @@
     "unocss": "^0.61.9",
     "unplugin-auto-import": "^0.18.2",
     "unplugin-element-plus": "^0.8.0",
+    "unplugin-icons": "^0.19.2",
     "unplugin-vue-components": "^0.27.3"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@vitejs/plugin-vue": "^5.1.2",
     "@vitejs/plugin-vue-jsx": "^4.0.0",
     "axios": "^1.7.3",
