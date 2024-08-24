@@ -1,9 +1,11 @@
 <template>
   <div class="home">
     <div class="header">
-      <h2>{{ data.name }}</h2>
+      <h2>
+        {{ data.name }}
+        <el-tag type="primary">{{ data.version }}</el-tag>
+      </h2>
 
-      <el-tag type="primary">{{ data.version }}</el-tag>
       <p>{{ data.description }}</p>
     </div>
 
@@ -61,7 +63,10 @@ const devDependencies = computed(() => data.value.dev_dependencies || {});
 const socket = new Socket();
 
 onMounted(() => {
-  socket.connect("ws://127.0.0.1:8080/ws");
+  // socket.connect("ws://127.0.0.1:8080/ws");
+  socket.connect(
+    import.meta.env.VITE_SOCKET_URL || `ws://${window.location.host}/ws`
+  );
   socket.on("onmessage", handleReceiveData);
   socket.on("onopen", () => {
     ElMessage.success("连接成功!");

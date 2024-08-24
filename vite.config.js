@@ -17,12 +17,14 @@ export default defineConfig(({ command, mode }) => {
    * command - 命令模式
    * mode - 生产、开发模式
    */
-
+  // if (mode !== "development") {
+  //   import.meta.env.VITE_SOCKET_URL = `ws://${window.location.host}/ws`;
+  // }
   return {
     // 项目根目录，index.html 所在的目录
     root: "",
     // 生产或开发环境下的基础路径
-    base: "",
+    base: "/static/",
     // 需要用到的插件数组
     plugins: [
       UnoCSS(),
@@ -120,7 +122,7 @@ export default defineConfig(({ command, mode }) => {
         // input:"src/index.js"
       },
       // 构建目录自动清除
-      emptyOutDir: false,
+      emptyOutDir: true,
     },
     // 依赖优化配置项
     optimizeDeps: {
