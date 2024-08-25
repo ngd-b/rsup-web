@@ -8,7 +8,11 @@
 
       <p>{{ data.description }}</p>
     </div>
-
+    <!-- <div class="mt-15 mb-15 flex gap-10">
+      <el-button type="primary">主版本更新</el-button>
+      <el-button type="primary">次版本更新</el-button>
+      <el-button type="primary">修订版本更新</el-button>
+    </div> -->
     <div class="version-list">
       <template
         :key="index"
@@ -39,7 +43,9 @@
           </div>
           <div class="mt-10 flex flex-wrap gap-10">
             <div v-for="v in formatValues(info.versions)" :key="v.version">
-              <el-tag type="success">{{ v.version }}</el-tag>
+              <el-tag @click="() => handleUpdate(info, v)" type="success">{{
+                v.version
+              }}</el-tag>
             </div>
           </div>
         </div>
@@ -50,6 +56,8 @@
 <script setup>
 import { useAppStore } from "@/stores/index.js";
 import Socket from "@/stores/socket.js";
+// import useAjax from "@/ajax/useAjax.js";
+import { ajax } from "@/ajax/index.js";
 
 const appStore = useAppStore();
 
@@ -90,5 +98,20 @@ function handleReceiveData(data) {
 
 function formatValues(obj) {
   return Object.values(obj);
+}
+
+/**
+ * 指定更新到某个版本
+ */
+async function handleUpdate(info, version) {
+  try {
+    let params = {
+      name: info.name,
+      version: version.version,
+    };
+    let res = await ajax.post("/api/updatePkgInfo", params);
+  } catch (e) {
+    console.error(e);
+  }
 }
 </script>
