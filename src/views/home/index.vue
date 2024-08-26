@@ -43,9 +43,11 @@
           </div>
           <div class="mt-10 flex flex-wrap gap-10">
             <div v-for="v in formatValues(info.versions)" :key="v.version">
-              <el-tag @click="() => handleUpdate(info, v)" type="success">{{
-                v.version
-              }}</el-tag>
+              <el-tag
+                @click="() => handleUpdate(info, v, index == 1)"
+                type="success"
+                >{{ v.version }}</el-tag
+              >
             </div>
           </div>
         </div>
@@ -103,11 +105,12 @@ function formatValues(obj) {
 /**
  * 指定更新到某个版本
  */
-async function handleUpdate(info, version) {
+async function handleUpdate(info, version, is_dev) {
   try {
     let params = {
       name: info.name,
       version: version.version,
+      is_dev,
     };
     let res = await ajax.post("/api/updatePkgInfo", params);
   } catch (e) {
