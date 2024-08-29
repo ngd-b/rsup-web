@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home m-auto max-w-800">
     <div class="header">
       <h2>
         {{ data.name }}
@@ -43,11 +43,17 @@
           </div>
           <div class="mt-10 flex flex-wrap gap-10">
             <div v-for="v in formatValues(info.versions)" :key="v.version">
-              <el-tag
-                @click="() => handleUpdate(info, v, index == 1)"
-                type="success"
-                >{{ v.version }}</el-tag
+              <el-popconfirm
+                title="确认升级为该版本？"
+                width="200px"
+                @confirm="() => handleUpdate(info, v, index == 1)"
               >
+                <template #reference>
+                  <el-tag class="cursor-pointer" type="success">{{
+                    v.version
+                  }}</el-tag>
+                </template>
+              </el-popconfirm>
             </div>
           </div>
         </div>
@@ -73,19 +79,7 @@ const devDependencies = computed(() => data.value.dev_dependencies || {});
 const socket = new Socket();
 
 onMounted(() => {
-  // socket.connect("ws://127.0.0.1:8080/ws");
-  socket.connect(
-    import.meta.env.VITE_SOCKET_URL || `ws://${window.location.host}/ws`
-  );
-  socket.on("onmessage", handleReceiveData);
-  socket.on("onopen", () => {
-    ElMessage.success("连接成功!");
-    console.log("open");
-  });
-  socket.on("onerror", (e) => {
-    ElMessage.warning("连接失败，请检查服务是否启动!");
-    console.error(e);
-  });
+  initSocket();
 });
 
 /**
@@ -102,6 +96,21 @@ function formatValues(obj) {
   return Object.values(obj);
 }
 
+function initSocket() {
+  socket.connect(
+    import.meta.env.VITE_SOCKET_URL || `ws://${window.location.host}/ws`
+  );
+  socket.on("onmessage", handleReceiveData);
+  socket.on("onopen", () => {
+    ElMessage.success("连接成功!");
+    console.log("open");
+  });
+  socket.on("onerror", (e) => {
+    ElMessage.warning("连接失败，请检查服务是否启动!");
+    console.error(e);
+  });
+}
+
 /**
  * 指定更新到某个版本
  */
@@ -112,7 +121,10 @@ async function handleUpdate(info, version, is_dev) {
       version: version.version,
       is_dev,
     };
-    let res = await ajax.post("/api/updatePkgInfo", params);
+    let res = await ajax.post("/api/updatePkg", params);
+    if (res.success) {
+      ElMessage.success("更新成功!");
+    }
   } catch (e) {
     console.error(e);
   }
