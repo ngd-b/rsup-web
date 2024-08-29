@@ -108,6 +108,10 @@ function initSocket() {
   socket.on("onerror", (e) => {
     ElMessage.warning("连接失败，请检查服务是否启动!");
     console.error(e);
+    // 10s后重新连接
+    setTimeout(() => {
+      initSocket();
+    }, 10 * 1000);
   });
 }
 
