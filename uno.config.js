@@ -21,10 +21,9 @@ export default defineConfig({
   },
   rules: [
     [
-      "flex-center",
+      "animate-rotate-360",
       {
-        "justify-content": "center",
-        "align-items": "center",
+        "animation-name": "rotate-360",
       },
     ],
   ],

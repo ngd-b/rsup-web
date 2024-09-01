@@ -13,7 +13,7 @@ import Axios from "axios";
 class Api {
   constructor(config) {
     const options = {
-      timeout: 6000,
+      timeout: 60 * 1000,
       ...config,
     };
 
