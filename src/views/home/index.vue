@@ -59,7 +59,7 @@
               <el-tag type="primary">{{ updating[info.name].version }}</el-tag>
             </div>
           </div>
-          <div class="p-l-30">
+          <div class="p-l-30" v-if="info.is_finish">
             <div class="bg-current color-gray-100">
               <p class="p-10 font-size-14 color-gray-500">
                 {{ info.description }}
@@ -145,6 +145,10 @@ function initSocket() {
   socket.on("onopen", () => {
     ElMessage.success("连接成功!");
     console.log("open");
+  });
+  socket.on("onclose", (e) => {
+    ElMessage.error("服务已断开!");
+    console.error(e);
   });
   socket.on("onerror", (e) => {
     ElMessage.warning("连接失败，请检查服务是否启动!");
