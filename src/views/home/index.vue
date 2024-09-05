@@ -164,6 +164,10 @@ function initSocket() {
  * 指定更新到某个版本
  */
 async function handleUpdate(info, version, is_dev) {
+  if (updating.value[info.name]) {
+    ElMessage.warning("正在更新，请稍后!");
+    return;
+  }
   try {
     let params = {
       name: info.name,
@@ -176,10 +180,15 @@ async function handleUpdate(info, version, is_dev) {
     let res = await ajax.post("/api/updatePkg", params);
     if (res.success) {
       ElMessage.success("更新成功!");
-      updating.value[info.name] = null;
+    } else {
+      ElMessage.error("更新失败，可点击查看更新日志!");
     }
   } catch (e) {
+    //
+    ElMessage.error("接口调用失败!");
     console.error(e);
+  } finally {
+    updating.value[info.name] = null;
   }
 }
 </script>
