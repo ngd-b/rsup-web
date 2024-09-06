@@ -2,7 +2,7 @@
   <div class="home m-auto max-w-800">
     <div class="header">
       <h2>
-        {{ data.name }}
+        <el-link>{{ data.name }}</el-link>
         <el-tag type="primary">{{ data.version }}</el-tag>
       </h2>
 
@@ -18,10 +18,12 @@
         :key="index"
         v-for="(dep, index) in [dependencies, devDependencies]"
       >
-        <h3>{{ index ? "devDependencies" : "dependencies" }}</h3>
+        <h3>
+          {{ index ? "devDependencies" : "dependencies" }}
+        </h3>
         <div
           class="version-item mb-10"
-          v-for="info in formatValues(dep)"
+          v-for="info in formatValues(dep, false)"
           :key="info.name"
         >
           <div class="flex gap-10 flex-items-center">
@@ -38,9 +40,9 @@
               <i-ep-check />
             </i>
 
-            <span>
+            <el-link @click="handleViewReadme(info)">
               {{ info.name }}
-            </span>
+            </el-link>
 
             <el-tag type="primary">{{ info.version }}</el-tag>
             <el-tag type="success">
@@ -67,7 +69,10 @@
             </div>
 
             <div class="mt-10 flex flex-wrap gap-10">
-              <div v-for="v in formatValues(info.versions)" :key="v.version">
+              <div
+                v-for="v in formatValues(info.versions, true)"
+                :key="v.version"
+              >
                 <span
                   @click="handleCopy(info, v)"
                   class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
@@ -98,6 +103,7 @@ import { useAppStore } from "@/stores/index.js";
 import Socket from "@/stores/socket.js";
 // import useAjax from "@/ajax/useAjax.js";
 import { ajax } from "@/ajax/index.js";
+import semverCompare from "semver/functions/compare.js";
 
 const appStore = useAppStore();
 // 正在升级的依赖
@@ -116,6 +122,8 @@ onMounted(() => {
   initSocket();
 });
 
+// 查看依赖包的readme
+function handleViewReadme(info) {}
 /**
  * 接收到数据
  */
@@ -126,8 +134,14 @@ function handleReceiveData(data) {
   appStore.updatePakage(data);
 }
 
-function formatValues(obj) {
-  return Object.values(obj);
+function formatValues(obj, is_compare) {
+  let res = Object.values(obj);
+
+  if (is_compare) {
+    res.sort((a, b) => semverCompare(a.version, b.version));
+  }
+
+  return res;
 }
 // 复制当前版本
 function handleCopy(info, v) {
