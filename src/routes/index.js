@@ -1,4 +1,4 @@
-import { createMemoryHistory, createRouter } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
   {
@@ -10,10 +10,16 @@ const routes = [
     name: "home",
     component: () => import("@/views/home/index.vue"),
   },
+  {
+    path: "/:is_dev/:name/readme",
+    name: "readme",
+    props: true,
+    component: () => import("@/views/home/readme.vue"),
+  },
 ];
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

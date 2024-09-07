@@ -40,7 +40,7 @@
               <i-ep-check />
             </i>
 
-            <el-link @click="handleViewReadme(info)">
+            <el-link @click="handleViewReadme(info, index)">
               {{ info.name }}
             </el-link>
 
@@ -100,11 +100,13 @@
 </template>
 <script setup>
 import { useAppStore } from "@/stores/index.js";
-import Socket from "@/stores/socket.js";
+
 // import useAjax from "@/ajax/useAjax.js";
 import { ajax } from "@/ajax/index.js";
 import semverCompare from "semver/functions/compare.js";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const appStore = useAppStore();
 // 正在升级的依赖
 const updating = ref({});
@@ -116,22 +118,9 @@ const dependencies = computed(() => data.value.dependencies || {});
 // 生产依赖
 const devDependencies = computed(() => data.value.dev_dependencies || {});
 
-const socket = new Socket();
-
-onMounted(() => {
-  initSocket();
-});
-
 // 查看依赖包的readme
-function handleViewReadme(info) {}
-/**
- * 接收到数据
- */
-function handleReceiveData(data) {
-  data = JSON.parse(data.data);
-
-  console.log(data);
-  appStore.updatePakage(data);
+function handleViewReadme(info, is_dev) {
+  router.push({ path: `/${is_dev ? 1 : 0}/${info.name}/readme` });
 }
 
 function formatValues(obj, is_compare) {
@@ -148,29 +137,6 @@ function handleCopy(info, v) {
   let name = info.name + "@" + v.version;
   navigator.clipboard.writeText(name).then(() => {
     ElMessage.success("复制成功!");
-  });
-}
-
-function initSocket() {
-  socket.connect(
-    import.meta.env.VITE_SOCKET_URL || `ws://${window.location.host}/ws`
-  );
-  socket.on("onmessage", handleReceiveData);
-  socket.on("onopen", () => {
-    ElMessage.success("连接成功!");
-    console.log("open");
-  });
-  socket.on("onclose", (e) => {
-    ElMessage.error("服务已断开!");
-    console.error(e);
-  });
-  socket.on("onerror", (e) => {
-    ElMessage.warning("连接失败，请检查服务是否启动!");
-    console.error(e);
-    // 10s后重新连接
-    setTimeout(() => {
-      initSocket();
-    }, 10 * 1000);
   });
 }
 
