@@ -29,7 +29,7 @@
           <div class="flex gap-10 flex-items-center">
             <i
               v-if="!info.is_finish"
-              class="an flex-inline animate-duration-1s animate-ease-linear animate-count-infinite flex-justify-center animate-rotate-360"
+              class="flex-inline animate-duration-1s animate-ease-linear animate-count-infinite flex-justify-center animate-rotate-360"
             >
               <i-ep-loading />
             </i>
@@ -120,7 +120,8 @@ const devDependencies = computed(() => data.value.dev_dependencies || {});
 
 // 查看依赖包的readme
 function handleViewReadme(info, is_dev) {
-  router.push({ path: `/${is_dev ? 1 : 0}/${info.name}/readme` });
+  let name = encodeURIComponent(info.name);
+  router.push({ path: `/${is_dev ? 1 : 0}/${name}/readme` });
 }
 
 function formatValues(obj, is_compare) {

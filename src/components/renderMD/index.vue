@@ -6,12 +6,33 @@ import MarkdownIt from "markdown-it";
 import Shiki from "@shikijs/markdown-it";
 // import "shiki/themes/vitesse-dark.mjs";
 // import "shiki/themes/vitesse-light.mjs";
+import { createHighlighter, bundledLanguages, bundledThemes } from "shiki";
 
 defineOptions({
   name: "render-md",
 });
+
+const highlighter = await createHighlighter({
+  themes: Object.keys(bundledThemes),
+  langs: Object.keys(bundledLanguages),
+});
+
 // markdown-it init
-const md = MarkdownIt();
+const md = MarkdownIt({
+  html: true,
+  xhtmlOut: true,
+  breaks: true,
+  langPrefix: "language-",
+  linkify: true,
+  typographer: true,
+  highlight: function (str, lang) {
+    console.log(str, lang);
+    return highlighter.codeToHtml(str, {
+      lang,
+      theme: "one-dark-pro",
+    });
+  },
+});
 // const md = MarkdownIt({
 //   // Enable HTML tags in source
 //   html: false,
@@ -48,11 +69,12 @@ const md = MarkdownIt();
 //     return "";
 //   },
 // });
+
 // md.use(
 //   await Shiki({
 //     themes: {
-//       light: "vitesse-light",
 //       dark: "vitesse-dark",
+//       light: "vitesse-light",
 //     },
 //   })
 // );
@@ -64,11 +86,14 @@ const props = defineProps({
 let content = ref("");
 watch(
   () => props.data,
-  () => {
-    console.log(props.data);
+  async () => {
     const html = md.render(props.data);
 
     content.value = html;
+    // content.value = await highlighter.codeToHtml(html, {
+    //   lang: "markdown",
+    //   theme: "vitesse-dark",
+    // });
   },
   {
     immediate: true,
