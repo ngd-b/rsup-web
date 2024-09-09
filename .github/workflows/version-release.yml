@@ -1,1 +1,60 @@
 
+name: Version Release
+
+on:
+  push:
+    paths:
+      - "package.json" # 当 package.json 变更时触发
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" # 根据需要调整 Node.js 版本
+          cache: "npm"
+
+      - name: Get current version from package.json
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Zip the dist directory
+        run: |
+          zip -r rsup-web.zip dist
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: "latest"
+          release_name: "Release v${{ env.VERSION }}"
+          body: |
+            ## What's Changed
+            See the latest changes in version ${{ env.VERSION }}.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release assets
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./rsup-web.zip
+          asset_name: rsup-web.zip
+          asset_content_type: application/zip
