@@ -2,9 +2,6 @@
 name: Version Release
 
 on:
-  push:
-    paths:
-      - "package.json" # 当 package.json 变更时触发
   workflow_dispatch:
 
 jobs:
