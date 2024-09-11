@@ -3,7 +3,7 @@
 </template>
 <script setup>
 import MarkdownIt from "markdown-it";
-import Shiki from "@shikijs/markdown-it";
+// import Shiki from "@shikijs/markdown-it";
 // import "shiki/themes/vitesse-dark.mjs";
 // import "shiki/themes/vitesse-light.mjs";
 import { createHighlighter, bundledLanguages, bundledThemes } from "shiki";

@@ -121,3 +121,5 @@ components.d.ts
 .vite
 
 dist.zip
+
+.DS_Store

@@ -111,7 +111,7 @@ export default defineConfig(({ command, mode }) => {
       // 指定输出目录
       outDir: "./dist",
       // 指定静态资源存放目录
-      assetsDir: "",
+      assetsDir: "static",
       // 启用、禁用css代码拆分
       cssCodeSplit: true,
       // 构建是否生成source map文件
