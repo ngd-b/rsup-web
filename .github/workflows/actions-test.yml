@@ -15,7 +15,7 @@ jobs:
       - run: echo "Say ${{env.val}} to $name. you are $age "
         env:
           val: hello
-      - run: echo env.val
+      - run: echo ${{vars.RUNNER_OS}}
       
       # - uses: actions/checkout@v4
       # - uses: actions/setup-node@v4
