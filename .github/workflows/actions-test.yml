@@ -1,16 +1,21 @@
-on: [push]
-
+on: 
+  push:
+  issues: 
+    types: 
+      - "opened"
+    
 jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: 
-          node-version: "20"
+      - run: echo ${{github.action}}
+      # - uses: actions/checkout@v4
+      # - uses: actions/setup-node@v4
+        # with: 
+          # node-version: "20"
           
       # - run: npm install
       # - run: npm test
-      - run: |
-          npm install 
-          npm run build
+      # - run: |
+      #    npm install 
+      #    npm run build
