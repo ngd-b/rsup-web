@@ -1,34 +1,32 @@
-
-name: Version Release
+name: version release
 
 on:
-  workflow_dispatch:
+  push:
+    # branches: main
+    tags: "*"
 
 jobs:
-  release:
+  release-build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20" # 根据需要调整 Node.js 版本
-          cache: "npm"
-
-      - name: Get current version from package.json
-        id: get_version
+      - name: checkout git code
+        uses: actions/checkout@v4
+      - name: setup node and use ndoe 20
+        uses: actions/setup-node@v4
+        with: 
+          node-version: 20
+      - name: install and build
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-   
-
-   
+          npm install
+          npm run build
+      - name: pacakge dist
+        run: |
+          tar -czvf rsup-web.tar.gz -C dist .
+      - name: create github release
+        id: new_release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          name: latest
+          make_latest: true
+          files: rsup-web.tar.gz
+        
