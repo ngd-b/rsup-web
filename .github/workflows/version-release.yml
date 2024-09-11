@@ -1,0 +1,32 @@
+name: version release
+
+on:
+  push:
+    # branches: main
+    tags: "*"
+
+jobs:
+  release-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout git code
+        uses: actions/checkout@v4
+      - name: setup node and use ndoe 20
+        uses: actions/setup-node@v4
+        with: 
+          node-version: 20
+      - name: install and build
+        run: |
+          npm install
+          npm run build
+      - name: pacakge dist
+        run: |
+          tar -czvf rsup-web.tar.gz -C dist .
+      - name: create github release
+        id: new_release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          name: latest
+          make_latest: true
+          files: rsup-web.tar.gz
+        
