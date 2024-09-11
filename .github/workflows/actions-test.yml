@@ -3,12 +3,18 @@ on:
   issues: 
     types: 
       - "opened"
-    
+env:
+  name: hboot
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    env:
+      age: 18
     steps:
-      - run: echo ${github.action}
+      - run: echo ${{github.action}}
+      - run: echo "Say $val to $name. you are $age "
+        env:
+          val: hello
       # - uses: actions/checkout@v4
       # - uses: actions/setup-node@v4
         # with: 
