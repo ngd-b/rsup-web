@@ -16,17 +16,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: install and build
         run: |
           npm install
           npm run build
+
       - name: pacakge dist
         run: |
           tar -czvf rsup-web.tar.gz -C dist .
+
       - name: create github release
         id: new_release
         uses: softprops/action-gh-release@v2.0.8
         with:
-          name: latest
+          tag_name: latest
+          name: ${{github.ref_name}}
           make_latest: true
           files: rsup-web.tar.gz

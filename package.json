@@ -1,6 +1,6 @@
 {
   "name": "rsup-web",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "rsup's web page",
   "main": "",
   "type": "module",
