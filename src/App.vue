@@ -47,8 +47,7 @@ export default defineComponent({
     handleReceiveData(data) {
       data = JSON.parse(data.data);
 
-      console.log(data);
-      this.appStore.updatePakage(data);
+      this.appStore.updatePackage(data);
     },
 
     initSocket() {

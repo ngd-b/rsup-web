@@ -1,18 +1,13 @@
 <template>
   <div class="home m-auto max-w-800">
     <div class="header">
-      <h2>
+      <h2 class="flex gap-20px flex-items-center">
         <el-link>{{ data.name }}</el-link>
         <el-tag type="primary">{{ data.version }}</el-tag>
       </h2>
 
       <p>{{ data.description }}</p>
     </div>
-    <!-- <div class="mt-15 mb-15 flex gap-10">
-      <el-button type="primary">主版本更新</el-button>
-      <el-button type="primary">次版本更新</el-button>
-      <el-button type="primary">修订版本更新</el-button>
-    </div> -->
     <div class="version-list">
       <template
         :key="index"
@@ -40,9 +35,11 @@
               <i-ep-check />
             </i>
 
-            <el-link @click="handleViewReadme(info, index)">
-              {{ info.name }}
-            </el-link>
+            <el-tooltip content="点击查看依赖 README.md" :show-after="300">
+              <el-link @click="handleViewReadme(info, index)">
+                {{ info.name }}
+              </el-link>
+            </el-tooltip>
 
             <el-tag type="primary">{{ info.version }}</el-tag>
             <el-tag type="success">
@@ -60,6 +57,8 @@
 
               <el-tag type="primary">{{ updating[info.name].version }}</el-tag>
             </div>
+            <!-- 查看当前升级历史 -->
+            <Tools :data="info" />
           </div>
           <div class="p-l-30" v-if="info.is_finish">
             <div class="bg-current color-gray-100">
@@ -73,11 +72,14 @@
                 v-for="v in formatValues(info.versions, true)"
                 :key="v.version"
               >
-                <span
-                  @click="handleCopy(info, v)"
-                  class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
-                  >{{ v.version }}</span
-                >
+                <el-tooltip content="点击复制版本号" :show-after="300">
+                  <span
+                    @click="handleCopy(info, v)"
+                    class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
+                    >{{ v.version }}</span
+                  >
+                </el-tooltip>
+
                 <el-popconfirm
                   title="确认升级为该版本？"
                   width="200px"
@@ -105,6 +107,8 @@ import { useAppStore } from "@/stores/index.js";
 import { ajax } from "@/ajax/index.js";
 import semverCompare from "semver/functions/compare.js";
 import { useRouter } from "vue-router";
+//
+import Tools from "./components/tools.vue";
 
 const router = useRouter();
 const appStore = useAppStore();
@@ -124,6 +128,8 @@ function handleViewReadme(info, is_dev) {
   router.push({ path: `/${is_dev ? 1 : 0}/${name}/readme` });
 }
 
+// 对象转数组遍历
+// is_compare： 单个依赖的版本信息格式
 function formatValues(obj, is_compare) {
   let res = Object.values(obj);
 
