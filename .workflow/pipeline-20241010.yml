@@ -1,0 +1,68 @@
+version: '1.0'
+name: pipeline-20241010
+displayName: version-publish
+triggers:
+  trigger: auto
+  push:
+    branches:
+      prefix:
+        - ''
+    tags:
+      prefix:
+        - v
+stages:
+  - name: stage-a138fd47
+    displayName: 未命名
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@nodejs
+        name: build_nodejs
+        displayName: Nodejs 构建
+        nodeVersion: 18.16.0
+        commands:
+          - '# 设置NPM源，提升安装速度'
+          - npm config set registry https://registry.npmmirror.com
+          - ''
+          - '# 执行编译命令'
+          - npm install && npm run build
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./dist
+        caches:
+          - ~/.npm
+          - ~/.yarn
+        notify: []
+        strategy:
+          retry: '0'
+  - name: stage-6d567849
+    displayName: 未命名
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: publish@general_artifacts
+        name: publish_general_artifacts
+        displayName: 上传制品
+        dependArtifact: BUILD_ARTIFACT
+        artifactName: rsup-web
+        notify: []
+        strategy:
+          retry: '0'
+  - name: stage-4a3b14bc
+    displayName: 发布
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: publish@release_artifacts
+        name: publish_release_artifacts
+        displayName: 发布
+        dependArtifact: rsup-web
+        version: 0.1.0.0
+        autoIncrement: true
+        notify: []
+        strategy:
+          retry: '0'
