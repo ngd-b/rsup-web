@@ -7,6 +7,12 @@ import "virtual:uno.css";
 import routes from "./routes";
 import { createPinia } from "pinia";
 import Components from "@/components/index.js";
+// vue-flow
+/* these are necessary styles for vue flow */
+import "@vue-flow/core/dist/style.css";
+
+/* this contains the default theme, these are optional styles */
+import "@vue-flow/core/dist/theme-default.css";
 
 const app = createApp(App);
 

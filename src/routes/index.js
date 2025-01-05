@@ -16,6 +16,12 @@ const routes = [
     props: true,
     component: () => import("@/views/home/readme.vue"),
   },
+  {
+    path: "/:name/relation",
+    name: "relation",
+    props: true,
+    component: () => import("@/views/home/relation/index.vue"),
+  },
 ];
 
 const router = createRouter({

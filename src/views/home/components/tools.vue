@@ -1,6 +1,6 @@
 <template>
   <div ref="root" class="flex cursor-pointer gap-10px flex-items-center op-60">
-    <el-tooltip content="升级历史">
+    <!-- <el-tooltip content="升级历史">
       <i
         class="i-material-symbols-history"
         @click="handleShowPopover('history')"
@@ -8,15 +8,23 @@
     </el-tooltip>
     <el-tooltip content="升级配置">
       <i class="i-ep-setting" />
+    </el-tooltip> -->
+    <el-tooltip content="依赖关系">
+      <i
+        class="i-material-symbols:conversion-path"
+        @click="handleViewRelation"
+      />
     </el-tooltip>
   </div>
-  <el-popover ref="popoverRef" :virtual-ref="root" virtual-triggering>
+  <!-- <el-popover ref="popoverRef" :virtual-ref="root" virtual-triggering>
     <component :is="dynamicComponent" :data="data" />
-  </el-popover>
+  </el-popover> -->
 </template>
 <script setup>
 import History from "./history.vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const TypeMapComponent = {
   history: History,
   setting: null,
@@ -33,5 +41,11 @@ const dynamicComponent = computed(() => TypeMapComponent[activeType.value]);
 
 const handleShowPopover = (type) => {
   activeType.value = type;
+};
+/**
+ * 查看依赖关系
+ */
+const handleViewRelation = () => {
+  router.push({ path: `/${encodeURIComponent(data.name)}/relation` });
 };
 </script>

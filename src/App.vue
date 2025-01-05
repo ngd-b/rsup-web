@@ -2,7 +2,7 @@
   <el-config-provider size="small" :z-index="3000" :locale="locale">
     <router-view v-slot="{ Component }">
       <template v-if="Component">
-        <Transition mode="out-in">
+        <Transition mode="out-in" name="el-fade-in">
           <Suspense>
             <component :is="Component" />
             <template #fallback> Loading... </template>
