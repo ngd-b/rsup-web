@@ -24,7 +24,7 @@ export default defineConfig(({ command, mode }) => {
     // 项目根目录，index.html 所在的目录
     root: "",
     // 生产或开发环境下的基础路径
-    base: "/static/",
+    base: "/",
     // 需要用到的插件数组
     plugins: [
       UnoCSS(),
@@ -111,7 +111,7 @@ export default defineConfig(({ command, mode }) => {
       // 指定输出目录
       outDir: "./dist",
       // 指定静态资源存放目录
-      assetsDir: "",
+      assetsDir: "assets",
       // 启用、禁用css代码拆分
       cssCodeSplit: true,
       // 构建是否生成source map文件
@@ -120,6 +120,12 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         // ...
         // input:"src/index.js"
+        output: {
+          // 指定打包后的文件名
+          entryFileNames: "static/[name].[hash].js",
+          chunkFileNames: "static/[name].[hash].js",
+          assetFileNames: "static/[ext]/[name].[ext]",
+        },
       },
       // 构建目录自动清除
       emptyOutDir: true,
