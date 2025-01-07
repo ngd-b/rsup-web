@@ -1,11 +1,15 @@
 <template>
   <div class="relative h-full w-full">
-    <VueFlow :nodes="nodes" :edges="edges">
+    <VueFlow
+      :nodes="nodes"
+      :edges="edges"
+      :connection-mode="ConnectionMode.Strict"
+    >
       <Background />
       <!-- 自定义节点 -->
-      <!-- <template #node-dep="props">
-      <Node v-bind="props" />
-    </template> -->
+      <template #node-relation="props">
+        <Node v-bind="props" />
+      </template>
     </VueFlow>
     <div class="absolute left-20px top-20px">
       <el-button type="primary" @click="handleBack">
@@ -21,14 +25,16 @@ import {
   useVueFlow,
   useNodesInitialized,
   Position,
+  ConnectionMode,
 } from "@vue-flow/core";
 import { Background } from "@vue-flow/background";
 import { ajax } from "@/ajax/index.js";
 import { onMounted, reactive, watch } from "vue";
 import dagre from "@dagrejs/dagre";
 import { useRouter } from "vue-router";
+import { v4 as uuidv4 } from "uuid";
 // 自定义
-// import Node from "./components/node.vue";
+import Node from "./components/node.vue";
 
 const router = useRouter();
 const props = defineProps({
@@ -56,26 +62,28 @@ watch(rendered, (val) => {
  *
  */
 const formatFlowData = (data) => {
-  const { name, relations, is_peer, version } = data;
+  const { id, name, relations, is_peer, version, is_loop } = data;
 
   // 使用name+version 作为唯一标识
-  let id = `${name}_v${version}`;
+  // let id = `${name}_v${version}`;
   nodes.push({
     id,
-    type: name == props.name ? "input" : relations.length > 0 ? "" : "output",
+    type: "relation",
     data: {
       label: name,
-      is_peer: is_peer,
-      version: version,
+      is_peer,
+      is_loop,
+      version,
     },
     targetPosition: Position.Left,
     sourcePosition: Position.Right,
     position: { x: Math.random() * 100, y: Math.random() * 100 },
   });
   relations.forEach((item) => {
+    item.id = uuidv4();
     edges.push({
       source: id,
-      target: `${item.name}_v${item.version}`,
+      target: item.id,
     });
     // 递归
     formatFlowData(item);
@@ -158,7 +166,7 @@ async function getRelationData() {
     if (res.success) {
       ElMessage.success("获取成功!");
       // 格式化节点、线
-      formatFlowData(res.data);
+      formatFlowData({ ...res.data, id: uuidv4() });
       // 优化布局
       // optimizeLayout();
     } else {
