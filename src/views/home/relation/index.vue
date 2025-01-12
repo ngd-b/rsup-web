@@ -36,6 +36,7 @@ const router = useRouter();
 const props = defineProps({
   name: String,
 });
+let relationData = reactive({});
 const loading = ref(false);
 // 节点、线
 const nodes = reactive([]);
@@ -69,7 +70,7 @@ const formatFlowData = (data) => {
       label: name,
       is_peer,
       is_loop,
-      is_parent: name == props.name && !is_loop,
+      is_parent: `${name}@${version}` == `${relationData.name}@${relationData.version}` && !is_loop,
       is_leaf: relations.length < 1,
       version,
     },
@@ -166,6 +167,8 @@ async function getRelationData() {
     let res = await ajax.get("/api/pkg/graph", { params });
     if (res.success) {
       ElMessage.success("获取成功!");
+      // 存储当前节点数据
+      relationData = { ...res.data };
       // 格式化节点、线
       formatFlowData({ ...res.data, id: uuidv4() });
       // 优化布局
