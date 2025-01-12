@@ -1,10 +1,6 @@
 <template>
   <div class="relative h-full w-full">
-    <VueFlow
-      :nodes="nodes"
-      :edges="edges"
-      :connection-mode="ConnectionMode.Strict"
-    >
+    <VueFlow :nodes="nodes" :edges="edges" :connection-mode="ConnectionMode.Strict">
       <Background />
       <!-- 自定义节点 -->
       <template #node-relation="props">
@@ -73,6 +69,8 @@ const formatFlowData = (data) => {
       label: name,
       is_peer,
       is_loop,
+      is_parent: name == props.name && !is_loop,
+      is_leaf: relations.length < 1,
       version,
     },
     targetPosition: Position.Left,
@@ -84,6 +82,9 @@ const formatFlowData = (data) => {
     edges.push({
       source: id,
       target: item.id,
+      style: {
+        stroke: item.is_loop ? "#f56c6c" : "#409eff",
+      },
     });
     // 递归
     formatFlowData(item);
@@ -162,7 +163,7 @@ async function getRelationData() {
     let params = {
       name: props.name,
     };
-    let res = await ajax.get("/api/graph", { params });
+    let res = await ajax.get("/api/pkg/graph", { params });
     if (res.success) {
       ElMessage.success("获取成功!");
       // 格式化节点、线
