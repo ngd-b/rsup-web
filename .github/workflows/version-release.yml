@@ -37,18 +37,13 @@ jobs:
       - name: pacakge dist
         run: |
           tar -czvf rsup-web.tar.gz -C dist .
-      - run: npx changelogithub # or changelogithub@0.12 if ensure the stable result
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: create github release
         id: new_release
         uses: softprops/action-gh-release@v2.0.8
         with:
           tag_name: latest
-          name: ${{github.ref_name}}
-          make_latest: true
+          # name: ${{github.ref_name}}
+          # make_latest: true
           files: |
             rsup-web.tar.gz
-            CHANGELOG.md  # 上传生成的 changelog 文件
