@@ -40,6 +40,11 @@
                 {{ info.name }}
               </el-link>
             </el-tooltip>
+            <template v-if="info.is_del">
+              <el-tooltip content="当前依赖已删除">
+                <el-tag type="danger">Deleted</el-tag>
+              </el-tooltip>
+            </template>
 
             <el-tag type="primary">{{ info.version }}</el-tag>
             <el-tag type="success">
@@ -83,7 +88,7 @@
                 <el-popconfirm
                   title="确认升级为该版本？"
                   width="200px"
-                  @confirm="() => handleUpdate(info, v, index == 1)"
+                  @confirm="() => handleUpdate(info, v)"
                 >
                   <template #reference>
                     <span
@@ -150,7 +155,7 @@ function handleCopy(info, v) {
 /**
  * 指定更新到某个版本
  */
-async function handleUpdate(info, version, is_dev) {
+async function handleUpdate(info, version) {
   if (updating.value[info.name]) {
     ElMessage.warning("正在更新，请稍后!");
     return;
@@ -159,7 +164,7 @@ async function handleUpdate(info, version, is_dev) {
     let params = {
       name: info.name,
       version: version.version,
-      is_dev,
+      is_dev: info.is_dev,
     };
     updating.value[info.name] = {
       version: version.version,
