@@ -9,17 +9,29 @@
       <p>{{ data.description }}</p>
     </div>
     <div class="version-list">
-      <template :key="index" v-for="(dep, index) in [dependencies, devDependencies]">
+      <template
+        :key="index"
+        v-for="(dep, index) in [dependencies, devDependencies]"
+      >
         <h3>
           {{ index ? "devDependencies" : "dependencies" }}
         </h3>
-        <div class="version-item mb-10" v-for="info in formatValues(dep, false)" :key="info.name">
+        <div
+          class="version-item mb-10"
+          v-for="info in formatValues(dep, false)"
+          :key="info.name"
+        >
           <div class="flex gap-10 flex-items-center">
-            <i v-if="!info.is_finish"
-              class="flex-inline animate-duration-1s animate-ease-linear animate-count-infinite flex-justify-center animate-rotate-360">
+            <i
+              v-if="!info.is_finish"
+              class="flex-inline animate-duration-1s animate-ease-linear animate-count-infinite flex-justify-center animate-rotate-360"
+            >
               <i-ep-loading />
             </i>
-            <i v-else class="flex-inline flex-justify-center flex-items-center color-blue">
+            <i
+              v-else
+              class="flex-inline flex-justify-center flex-items-center color-blue"
+            >
               <i-ep-check />
             </i>
 
@@ -33,8 +45,13 @@
             <el-tag type="success">
               latest：{{ info["dist-tags"].latest }}
             </el-tag>
-            <div class="flex flex-items-center overflow-hidden" v-if="updating[info.name]">
-              <i class="animate-slide-in-up animate-duration-1s animate-count-infinite color-yellow-500">
+            <div
+              class="flex flex-items-center overflow-hidden"
+              v-if="updating[info.name]"
+            >
+              <i
+                class="animate-slide-in-up animate-duration-1s animate-count-infinite color-yellow-500"
+              >
                 <i-ep-top />
               </i>
 
@@ -51,17 +68,28 @@
             </div>
 
             <div class="mt-10 flex flex-wrap gap-10">
-              <div v-for="v in formatValues(info.versions, true)" :key="v.version">
+              <div
+                v-for="v in formatValues(info.versions, true)"
+                :key="v.version"
+              >
                 <el-tooltip content="点击复制版本号" :show-after="300">
-                  <span @click="handleCopy(info, v)"
-                    class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500">{{
-                      v.version }}</span>
+                  <span
+                    @click="handleCopy(info, v)"
+                    class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
+                    >{{ v.version }}</span
+                  >
                 </el-tooltip>
 
-                <el-popconfirm title="确认升级为该版本？" width="200px" @confirm="() => handleUpdate(info, v, index == 1)">
+                <el-popconfirm
+                  title="确认升级为该版本？"
+                  width="200px"
+                  @confirm="() => handleUpdate(info, v, index == 1)"
+                >
                   <template #reference>
                     <span
-                      class="cursor-pointer border border-rd-3 border-solid p-l-5 p-r-5 font-size-12 color-yellow-500">up</span>
+                      class="cursor-pointer border border-rd-3 border-solid p-l-5 p-r-5 font-size-12 color-yellow-500"
+                      >up</span
+                    >
                   </template>
                 </el-popconfirm>
               </div>
@@ -139,6 +167,8 @@ async function handleUpdate(info, version, is_dev) {
     let res = await ajax.post("/api/pkg/update", params);
     if (res.success) {
       ElMessage.success("更新成功!");
+      // 更新成功后，清楚之前查询的依赖关系图
+      appStore.updateRelationPkg({ name: props.name, relation: null });
     } else {
       ElMessage.error("更新失败，可点击查看更新日志!");
     }
