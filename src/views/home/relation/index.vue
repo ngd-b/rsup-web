@@ -1,6 +1,10 @@
 <template>
   <div class="relative h-full w-full">
-    <VueFlow :nodes="nodes" :edges="edges" :connection-mode="ConnectionMode.Strict">
+    <VueFlow
+      :nodes="nodes"
+      :edges="edges"
+      :connection-mode="ConnectionMode.Strict"
+    >
       <Background />
       <!-- 自定义节点 -->
       <template #node-relation="props">
@@ -29,9 +33,12 @@ import { onMounted, reactive, watch } from "vue";
 import dagre from "@dagrejs/dagre";
 import { useRouter } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
+import { useAppStore } from "@/stores/index.js";
+
 // 自定义
 import Node from "./components/node.vue";
 
+const appStore = useAppStore();
 const router = useRouter();
 const props = defineProps({
   name: String,
@@ -70,7 +77,9 @@ const formatFlowData = (data) => {
       label: name,
       is_peer,
       is_loop,
-      is_parent: `${name}@${version}` == `${relationData.name}@${relationData.version}` && !is_loop,
+      is_parent:
+        `${name}@${version}` ==
+          `${relationData.name}@${relationData.version}` && !is_loop,
       is_leaf: relations.length < 1,
       version,
     },
@@ -159,6 +168,13 @@ const optimizeLayout = () => {
  * 请求获取依赖关系数据
  */
 async function getRelationData() {
+  // 从缓存中取
+  let data = appStore.relationPkg[props.name];
+  if (data) {
+    relationData = { ...data };
+    formatFlowData({ ...data, id: uuidv4() });
+    return;
+  }
   loading.value = true;
   try {
     let params = {
@@ -169,6 +185,8 @@ async function getRelationData() {
       ElMessage.success("获取成功!");
       // 存储当前节点数据
       relationData = { ...res.data };
+      // 全局存储
+      appStore.updateRelationPkg({ name: props.name, relation: res.data });
       // 格式化节点、线
       formatFlowData({ ...res.data, id: uuidv4() });
       // 优化布局
