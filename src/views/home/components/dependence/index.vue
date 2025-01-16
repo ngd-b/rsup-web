@@ -42,7 +42,7 @@
             </el-tooltip>
             <template v-if="info.is_del">
               <el-tooltip content="当前依赖已删除">
-                <el-tag type="danger">Deleted</el-tag>
+                <el-tag type="danger">deleted</el-tag>
               </el-tooltip>
             </template>
 
@@ -107,7 +107,7 @@
 </template>
 <script setup>
 import { useAppStore } from "@/stores/index.js";
-
+import { usePackageStore } from "@/views/home/stores/index.js";
 // import useAjax from "@/ajax/useAjax.js";
 import { ajax } from "@/ajax/index.js";
 import semverCompare from "semver/functions/compare.js";
@@ -116,6 +116,7 @@ import { useRouter } from "vue-router";
 import Tools from "./tools.vue";
 
 const router = useRouter();
+const packageStore = usePackageStore();
 const appStore = useAppStore();
 // 正在升级的依赖
 const updating = ref({});
@@ -155,34 +156,24 @@ function handleCopy(info, v) {
 /**
  * 指定更新到某个版本
  */
-async function handleUpdate(info, version) {
+function handleUpdate(info, version) {
   if (updating.value[info.name]) {
     ElMessage.warning("正在更新，请稍后!");
     return;
   }
-  try {
-    let params = {
-      name: info.name,
-      version: version.version,
-      is_dev: info.is_dev,
-    };
-    updating.value[info.name] = {
-      version: version.version,
-    };
-    let res = await ajax.post("/api/pkg/update", params);
-    if (res.success) {
-      ElMessage.success("更新成功!");
+  updating.value[info.name] = {
+    version: version.version,
+  };
+  packageStore.installPackage({ ...info, version: version.version }).then(
+    () => {
+      // 删除成功
+      updating.value[info.name] = null;
       // 更新成功后，清楚之前查询的依赖关系图
-      appStore.updateRelationPkg({ name: props.name, relation: null });
-    } else {
-      ElMessage.error("更新失败，可点击查看更新日志!");
+      appStore.updateRelationPkg({ name: info.name, relation: null });
+    },
+    () => {
+      updating.value[info.name] = null;
     }
-  } catch (e) {
-    //
-    ElMessage.error("接口调用失败!");
-    console.error(e);
-  } finally {
-    updating.value[info.name] = null;
-  }
+  );
 }
 </script>
