@@ -47,8 +47,7 @@ jobs:
         uses: softprops/action-gh-release@v2.0.8
         with:
           tag_name: latest
-          name: ${{github.ref_name}}
-          make_latest: true
+          # name: ${{github.ref_name}}
+          # make_latest: true
           files: |
             rsup-web.tar.gz
-            CHANGELOG.md  # 上传生成的 changelog 文件
