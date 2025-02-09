@@ -20,7 +20,7 @@ const routes = [
     path: "/:name/relation",
     name: "relation",
     props: true,
-    component: () => import("@/views/home/relation/index.vue"),
+    component: () => import("@/views/relation/index.vue"),
   },
 ];
 
