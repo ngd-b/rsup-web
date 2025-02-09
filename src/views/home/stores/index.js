@@ -7,9 +7,19 @@ import { ajax } from "@/ajax/index.js";
  */
 export const usePackageStore = defineStore("package", {
   state() {
-    return {};
+    return {
+      // 环境变量
+      env: {},
+    };
   },
   actions: {
+    /**
+     * 获取当前系统环境列表
+     * @returns
+     */
+    updateEnvData(payload) {
+      this.env = payload;
+    },
     /**
      * 删除指定依赖
      * @param {*} pkg

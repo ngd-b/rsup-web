@@ -108,8 +108,7 @@
 <script setup>
 import { useAppStore } from "@/stores/index.js";
 import { usePackageStore } from "@/views/home/stores/index.js";
-// import useAjax from "@/ajax/useAjax.js";
-import { ajax } from "@/ajax/index.js";
+
 import semverCompare from "semver/functions/compare.js";
 import { useRouter } from "vue-router";
 //
@@ -168,7 +167,7 @@ function handleUpdate(info, version) {
     () => {
       // 删除成功
       updating.value[info.name] = null;
-      // 更新成功后，清楚之前查询的依赖关系图
+      // 更新成功后，之前查询的依赖关系图
       appStore.updateRelationPkg({ name: info.name, relation: null });
     },
     () => {
