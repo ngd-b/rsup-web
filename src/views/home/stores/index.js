@@ -10,9 +10,14 @@ export const usePackageStore = defineStore("package", {
     return {
       // 环境变量
       env: {},
+      // 正在升级的依赖
+      updating: {},
     };
   },
   actions: {
+    updateUpdating(name, payload) {
+      this.updating[name] = payload;
+    },
     /**
      * 获取当前系统环境列表
      * @returns

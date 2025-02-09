@@ -1,21 +1,5 @@
 <template>
   <RsDialog :visible="visible" title="一键安装依赖" @close="handleClose">
-    <!-- <div class="flex flex-col gap-10px">
-      <div class="">
-        <span>选择工具</span>
-      </div>
-      <div class="flex gap-10px flex-wrap">
-        <div
-          class="flex cursor-pointer b-rd-6px flex-items-center gap-3px p-x-10px p-y-5px bg-gray-200"
-          :class="[params.manager_name == item.name ? 'bg-primary' : '']"
-          v-for="item in npmEnvData"
-          :key="item.name"
-        >
-          <span>{{ item.name }}</span>
-          <el-tag>{{ item.version }}</el-tag>
-        </div>
-      </div>
-    </div> -->
     <template v-slot:default>
       <el-form ref="formRef" :rules="rules" label-position="top" :model="form">
         <el-form-item label="选择工具" prop="manager_name">
@@ -32,12 +16,7 @@
         <el-form-item label="设置依赖源" prop="is_registry">
           <div class="w-full flex gap-15px flex-items-center">
             <el-checkbox v-model="form.is_registry">自定义</el-checkbox>
-            <!-- <el-input
-              class="flex-basis-300px"
-              v-if="form.is_registry"
-              v-model="form.registry"
-              placeholder="请输入依赖源"
-            /> -->
+
             <RsSelect
               filterable
               allow-create
