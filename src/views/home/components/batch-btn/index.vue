@@ -15,8 +15,8 @@
       <el-tooltip :show-after="1000" content="建议升级，解决一些潜在的bug">
         <el-button
           type="primary"
-          @click="handleClick('update', { semver: 'minor' })"
-          >一键版本(minor)升级</el-button
+          @click="handleClick('update', { semver: 'patch' })"
+          >一键版本(patch)升级</el-button
         >
       </el-tooltip>
 
@@ -26,8 +26,8 @@
       >
         <el-button
           type="warning"
-          @click="handleClick('update', { semver: 'premajor' })"
-          >一键版本(premajor)升级</el-button
+          @click="handleClick('update', { semver: 'minor' })"
+          >一键版本(minor)升级</el-button
         >
       </el-tooltip>
 
