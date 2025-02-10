@@ -1,7 +1,13 @@
 <template>
   <div class="home h-full w-full flex flex-wrap gap-20px">
-    <!-- 环境 -->
-    <EnvConfig class="flex-grow-1 flex-basis-300px overflow-auto p-x-15px" />
+    <div
+      class="flex flex-grow-1 flex-basis-300px flex-col gap-20px overflow-auto p-15px"
+    >
+      <BatchBtn />
+      <!-- 环境 -->
+      <EnvConfig />
+    </div>
+
     <!-- 依赖信息 -->
     <Dependence class="flex-grow-1 flex-basis-500px overflow-auto p-x-15px" />
     <!-- 依赖排行榜 -->
@@ -12,4 +18,6 @@
 import Dependence from "./components/dependence/index.vue";
 import EnvConfig from "./components/env/index.vue";
 import Summary from "./components/summary/index.vue";
+// 一键安装操作
+import BatchBtn from "./components/batch-btn/index.vue";
 </script>

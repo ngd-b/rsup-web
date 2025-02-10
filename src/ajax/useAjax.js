@@ -1,22 +1,32 @@
-import { onMounted, reactive } from "vue";
-import ajax from "./index.js";
+import { onMounted } from "vue";
+import { ajax } from "./index.js";
 
-export default function useAjax(url, options) {
+/**
+ * hooks - ajax
+ * @param {*} url
+ * @param {*} options
+ * @returns
+ */
+export default function useAjax(method, url, options = {}) {
   let loading = ref(false);
-  let data = reactive(null);
+  let data = ref(null);
   let error = ref(null);
 
   onMounted(() => {
-    ajax({ ...options, url }).then(
+    loading.value = true;
+    ajax({ method, url, ...options }).then(
       (res) => {
+        loading.value = false;
         if (res.success) {
-          data = res.data;
+          data.value = res.data;
         } else {
-          error = res.msg;
+          error.value = res.msg;
         }
       },
       (e) => {
-        error = e;
+        loading.value = false;
+        error.value = e;
+        ElMessage.error("接口调用失败!");
       }
     );
   });

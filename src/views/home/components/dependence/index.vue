@@ -108,8 +108,7 @@
 <script setup>
 import { useAppStore } from "@/stores/index.js";
 import { usePackageStore } from "@/views/home/stores/index.js";
-// import useAjax from "@/ajax/useAjax.js";
-import { ajax } from "@/ajax/index.js";
+
 import semverCompare from "semver/functions/compare.js";
 import { useRouter } from "vue-router";
 //
@@ -119,7 +118,8 @@ const router = useRouter();
 const packageStore = usePackageStore();
 const appStore = useAppStore();
 // 正在升级的依赖
-const updating = ref({});
+// const updating = ref({});
+const updating = computed(() => packageStore.updating);
 
 const data = computed(() => appStore.package);
 
@@ -161,18 +161,17 @@ function handleUpdate(info, version) {
     ElMessage.warning("正在更新，请稍后!");
     return;
   }
-  updating.value[info.name] = {
-    version: version.version,
-  };
+
+  packageStore.updateUpdating(info.name, { version: version.version });
   packageStore.installPackage({ ...info, version: version.version }).then(
     () => {
       // 删除成功
-      updating.value[info.name] = null;
-      // 更新成功后，清楚之前查询的依赖关系图
+      packageStore.updateUpdating(info.name, null);
+      // 更新成功后，之前查询的依赖关系图
       appStore.updateRelationPkg({ name: info.name, relation: null });
     },
     () => {
-      updating.value[info.name] = null;
+      packageStore.updateUpdating(info.name, null);
     }
   );
 }
