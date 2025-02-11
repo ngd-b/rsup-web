@@ -19,8 +19,12 @@
       </div>
       <div class="env-item-content flex flex-col gap-10px p-15px op-70">
         <div
-          class="env-item flex cursor-pointer justify-between b-rd-5px bg-gray-100 p-x-5px p-y-5px hover:bg-gray-200"
-          :class="data.manager_name == item.name ? 'bg-gray-300' : ''"
+          class="env-item flex cursor-pointer justify-between b-rd-5px bg-gray-100 p-x-5px p-y-5px"
+          :class="
+            data.manager_name == item.name
+              ? 'bg-primary color-#fff'
+              : 'hover:bg-gray-200'
+          "
           v-for="item in npmEnvData"
           :key="item.name"
         >

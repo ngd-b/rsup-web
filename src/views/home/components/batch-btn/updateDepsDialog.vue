@@ -116,7 +116,7 @@ const handleSubmit = () => {
     return;
   }
   // 更新当前升级状态
-  packageStore.batchUpdatePakcage(params);
+  packageStore.batchUpdatePackage(params);
 
   ElNotification({
     message: "依赖升级中,依赖中可查看升级状态",

@@ -32,16 +32,38 @@ export const usePackageStore = defineStore("package", {
       this.env = payload;
     },
     /**
+     * 重新加载当前项目的依赖
+     */
+    reloadPackage() {
+      return new Promise((resolve, reject) => {
+        try {
+          ajax.post("/api/pkg/reload").then((res) => {
+            if (res.success) {
+              resolve();
+            } else {
+              ElMessage.error("重新加载失败，可点击查看更新日志!");
+              reject();
+            }
+          });
+        } catch (e) {
+          //
+          ElMessage.error("接口调用失败!");
+          console.error(e);
+          reject();
+        }
+      });
+    },
+    /**
      * 批量升级依赖
      *
      */
-    batchUpdatePakcage(params) {
+    batchUpdatePackage(params) {
       const appStore = useAppStore();
 
       this.updateBatchUpdating(params);
       return new Promise((resolve, reject) => {
-        try {
-          ajax.post("/api/pkg/batchUpdate", params).then((res) => {
+        ajax.post("/api/pkg/batchUpdate", params).then(
+          (res) => {
             this.updateBatchUpdating(params, false);
             if (res.success) {
               // ElMessage.success("依赖安装更新成功!");
@@ -58,14 +80,14 @@ export const usePackageStore = defineStore("package", {
               ElMessage.error("依赖安装失败，可点击查看更新日志!");
               reject();
             }
-          });
-        } catch (e) {
-          //
-          ElMessage.error("接口调用失败!");
-          console.error(e);
-          this.updateBatchUpdating(params, false);
-          reject();
-        }
+          },
+          (e) => {
+            ElMessage.error("接口调用失败!");
+            console.error(e);
+            this.updateBatchUpdating(params, false);
+            reject();
+          }
+        );
       });
     },
     /**
@@ -75,12 +97,12 @@ export const usePackageStore = defineStore("package", {
      */
     deletePackage(pkg) {
       return new Promise((resolve, reject) => {
-        try {
-          let params = {
-            name: pkg.name,
-            is_dev: pkg.is_dev,
-          };
-          ajax.post("/api/pkg/remove", params).then((res) => {
+        let params = {
+          name: pkg.name,
+          is_dev: pkg.is_dev,
+        };
+        ajax.post("/api/pkg/remove", params).then(
+          (res) => {
             if (res.success) {
               ElMessage.success("依赖删除更新成功!");
               resolve();
@@ -88,13 +110,13 @@ export const usePackageStore = defineStore("package", {
               ElMessage.error("删除失败，可点击查看更新日志!");
               reject();
             }
-          });
-        } catch (e) {
-          //
-          ElMessage.error("接口调用失败!");
-          console.error(e);
-          reject();
-        }
+          },
+          (e) => {
+            ElMessage.error("接口调用失败!");
+            console.error(e);
+            reject();
+          }
+        );
       });
     },
     /**
@@ -104,14 +126,14 @@ export const usePackageStore = defineStore("package", {
      */
     installPackage(pkg) {
       return new Promise((resolve, reject) => {
-        try {
-          let params = {
-            name: pkg.name,
-            version: pkg.version,
-            is_dev: pkg.is_dev,
-            is_change: pkg.is_change,
-          };
-          ajax.post("/api/pkg/update", params).then((res) => {
+        let params = {
+          name: pkg.name,
+          version: pkg.version,
+          is_dev: pkg.is_dev,
+          is_change: pkg.is_change,
+        };
+        ajax.post("/api/pkg/update", params).then(
+          (res) => {
             if (res.success) {
               ElMessage.success("依赖安装更新成功!");
               resolve();
@@ -119,13 +141,13 @@ export const usePackageStore = defineStore("package", {
               ElMessage.error("依赖安装失败，可点击查看更新日志!");
               reject();
             }
-          });
-        } catch (e) {
-          //
-          ElMessage.error("接口调用失败!");
-          console.error(e);
-          reject();
-        }
+          },
+          (e) => {
+            ElMessage.error("接口调用失败!");
+            console.error(e);
+            reject();
+          }
+        );
       });
     },
   },

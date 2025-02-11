@@ -1,4 +1,12 @@
 <template>
+  <div
+    class="fixed right-10px top-15px flex cursor-pointer gap-10px flex-items-center b-rd-15px p-x-15px p-y-5px shadow"
+  >
+    <div
+      @click="handleViewGithub"
+      class="i-simple-icons:github h-20px w-20px"
+    ></div>
+  </div>
   <el-config-provider size="small" :z-index="3000" :locale="locale">
     <router-view v-slot="{ Component }">
       <template v-if="Component">
@@ -41,6 +49,9 @@ export default defineComponent({
     this.initSocket();
   },
   methods: {
+    handleViewGithub() {
+      window.open("https://github.com/ngd-b/rsup.git");
+    },
     /**
      * 接收到数据
      */

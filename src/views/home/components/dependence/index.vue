@@ -1,26 +1,17 @@
 <template>
   <div class="h-full w-full">
-    <div class="header">
-      <h2 class="flex gap-20px flex-items-center">
-        <el-link>{{ data.name }}</el-link>
-        <el-tag type="primary">{{ data.version }}</el-tag>
-      </h2>
-
-      <p>{{ data.description }}</p>
-    </div>
-    <div class="version-list">
-      <template
-        :key="index"
-        v-for="(dep, index) in [dependencies, devDependencies]"
+    <div :key="dep" v-for="(dep, index) in [dependencies, devDependencies]">
+      <h3>
+        {{ index ? "devDependencies" : "dependencies" }} ({{
+          formatValues(dep, false).length
+        }})
+      </h3>
+      <div
+        class="version-item mb-10"
+        v-for="info in formatValues(dep, false)"
+        :key="info.name"
       >
-        <h3>
-          {{ index ? "devDependencies" : "dependencies" }}
-        </h3>
-        <div
-          class="version-item mb-10"
-          v-for="info in formatValues(dep, false)"
-          :key="info.name"
-        >
+        <div class="flex flex-col">
           <div class="flex gap-10 flex-items-center">
             <i
               v-if="!info.is_finish"
@@ -62,46 +53,47 @@
 
               <el-tag type="primary">{{ updating[info.name].version }}</el-tag>
             </div>
-            <!-- 查看当前升级历史 -->
-            <Tools :data="info" />
           </div>
-          <div class="p-l-30" v-if="info.is_finish">
-            <div class="bg-current color-gray-100">
-              <p class="p-10 font-size-14 color-gray-500">
-                {{ info.description }}
-              </p>
-            </div>
+          <!-- 操作 -->
+          <Tools class="m-l-30px m-t-10px" :data="info" />
+        </div>
 
-            <div class="mt-10 flex flex-wrap gap-10">
-              <div
-                v-for="v in formatValues(info.versions, true)"
-                :key="v.version"
-              >
-                <el-tooltip content="点击复制版本号" :show-after="300">
-                  <span
-                    @click="handleCopy(info, v)"
-                    class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
-                    >{{ v.version }}</span
-                  >
-                </el-tooltip>
+        <div class="p-l-30" v-if="info.is_finish">
+          <div class="b-rd-5px bg-current color-gray-100">
+            <p class="p-10 font-size-14 color-gray-500">
+              {{ info.description }}
+            </p>
+          </div>
 
-                <el-popconfirm
-                  title="确认升级为该版本？"
-                  width="200px"
-                  @confirm="() => handleUpdate(info, v)"
+          <div class="mt-10 flex flex-wrap gap-10">
+            <div
+              v-for="v in formatValues(info.versions, true)"
+              :key="v.version"
+            >
+              <el-tooltip content="点击复制版本号" :show-after="300">
+                <span
+                  @click="handleCopy(info, v)"
+                  class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
+                  >{{ v.version }}</span
                 >
-                  <template #reference>
-                    <span
-                      class="cursor-pointer border border-rd-3 border-solid p-l-5 p-r-5 font-size-12 color-yellow-500"
-                      >up</span
-                    >
-                  </template>
-                </el-popconfirm>
-              </div>
+              </el-tooltip>
+
+              <el-popconfirm
+                title="确认升级为该版本？"
+                width="200px"
+                @confirm="() => handleUpdate(info, v)"
+              >
+                <template #reference>
+                  <span
+                    class="cursor-pointer border border-rd-3 border-solid p-l-5 p-r-5 font-size-12 color-yellow-500"
+                    >up</span
+                  >
+                </template>
+              </el-popconfirm>
             </div>
           </div>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>
