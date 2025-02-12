@@ -1,6 +1,5 @@
 // 类型提示
-import path from "path";
-import { defineConfig } from "vite";
+import { defineConfig, UserConfig } from "vite";
 import vueJSX from "@vitejs/plugin-vue-jsx";
 import vueSFC from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
@@ -12,7 +11,7 @@ import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
 
 // config
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }): UserConfig => {
   /**
    * command - 命令模式
    * mode - 生产、开发模式
@@ -57,7 +56,7 @@ export default defineConfig(({ command, mode }) => {
       Icons({
         autoInstall: true,
       }),
-      ElementPlus(),
+      ElementPlus({}),
     ],
     // 静态资源服务目录地址
     publicDir: "",
@@ -101,7 +100,7 @@ export default defineConfig(({ command, mode }) => {
     server: {
       // ...
       host: "0.0.0.0",
-      port: "8081",
+      port: 8081,
       // 项目启动后自动打开浏览器
       open: true,
     },
