@@ -11,7 +11,7 @@ import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
 
 // config
-export default defineConfig(({ mode }): UserConfig => {
+export default defineConfig((): UserConfig => {
   /**
    * command - 命令模式
    * mode - 生产、开发模式

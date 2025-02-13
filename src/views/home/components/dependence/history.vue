@@ -14,14 +14,12 @@
     </div>
   </div>
 </template>
-<script setup>
-import { useAppStore } from "@/stores/index.js";
-import { computed } from "vue";
+<script setup lang="ts">
+// import { useAppStore } from "@/stores/index.js";
 const { data = {} } = defineProps({
   data: Object,
 });
 
-const store = useAppStore();
-
-const versions = computed(() => store.upPkg[data.name] || []);
+// const versions = computed(() => store.upPkg[data.name] || []);
+const versions: string[] = [];
 </script>

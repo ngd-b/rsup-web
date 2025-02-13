@@ -5,11 +5,11 @@ export interface Pkg {
   name: string;
   version: string;
   description: string;
-  scripts: Map<string, string>;
+  scripts: Record<string, string>;
   // 当前项目的管理工具
   manager_name: string;
-  dependencies: Map<string, PkgInfo>;
-  dev_dependencies: Map<string, PkgInfo>;
+  dependencies: Record<string, PkgInfo>;
+  dev_dependencies: Record<string, PkgInfo>;
 }
 
 export interface PkgInfo {
@@ -21,7 +21,7 @@ export interface PkgInfo {
   keywords: string[];
   license: string;
   "dist-tags": DistTags;
-  versions: Map<string, VersionInfo>;
+  versions: Record<string, VersionInfo>;
   is_dev: boolean;
   is_finish: boolean;
   is_del: boolean;
@@ -39,9 +39,9 @@ export interface VersionInfo {
   keywords: string[];
   author: Author;
   maintainers: Memeber[];
-  dependencies: Map<string, string>;
-  dev_dependencies: Map<string, string>;
-  peer_dependencies: Map<string, string>;
+  dependencies: Record<string, string>;
+  dev_dependencies: Record<string, string>;
+  peer_dependencies: Record<string, string>;
   dist: Dist;
 }
 

@@ -4,7 +4,9 @@
  */
 import { Pkg } from "@/ajax/type/pkg";
 
-interface Config {}
+interface Config {
+  name?: string;
+}
 
 type SocketData = string | ArrayBuffer | Blob | ArrayBufferView;
 type ReceiveData = Pkg;

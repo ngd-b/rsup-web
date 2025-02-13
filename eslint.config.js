@@ -8,7 +8,7 @@ import vueEslintParser from "vue-eslint-parser";
 
 export default typescriptEslint.config(
   {
-    ignores: [".vite/**", "*.d.ts", "**/dist"],
+    ignores: [".vite/**", "*.d.ts", "**/dist", "**/*/*.d.ts"],
   },
   {
     extends: [
@@ -32,6 +32,8 @@ export default typescriptEslint.config(
       "no-undef": "warn",
       "no-unused-vars": "warn",
       "vue/multi-word-component-names": "off",
+      "prefer-const": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   }
 );

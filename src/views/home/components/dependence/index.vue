@@ -1,6 +1,6 @@
 <template>
   <div class="h-full w-full">
-    <div :key="dep" v-for="(dep, index) in [dependencies, devDependencies]">
+    <div :key="index" v-for="(dep, index) in [dependencies, devDependencies]">
       <h3>
         {{ index ? "devDependencies" : "dependencies" }} ({{
           formatValues(dep, false).length
@@ -8,7 +8,7 @@
       </h3>
       <div
         class="version-item mb-10"
-        v-for="info in formatValues(dep, false)"
+        v-for="info in formatValues<PkgInfo>(dep, false)"
         :key="info.name"
       >
         <div class="flex flex-col">
@@ -51,7 +51,7 @@
                 <i-ep-top />
               </i>
 
-              <el-tag type="primary">{{ updating[info.name].version }}</el-tag>
+              <el-tag type="primary">{{ updating[info.name]?.version }}</el-tag>
             </div>
           </div>
           <!-- 操作 -->
@@ -67,15 +67,16 @@
 
           <div class="mt-10 flex flex-wrap gap-10">
             <div
-              v-for="v in formatValues(info.versions, true)"
+              v-for="v in formatValues<VersionInfo>(info.versions, true)"
               :key="v.version"
             >
               <el-tooltip content="点击复制版本号" :show-after="300">
-                <span
-                  @click="handleCopy(info, v)"
-                  class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
-                  >{{ v.version }}</span
-                >
+                <RsCopy :text="`${info.name}@${v.version}`">
+                  <span
+                    class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
+                    >{{ v.version }}</span
+                  >
+                </RsCopy>
               </el-tooltip>
 
               <el-popconfirm
@@ -97,14 +98,15 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { useAppStore } from "@/stores/index.js";
 import { usePackageStore } from "@/views/home/stores/index.js";
 
-import semverCompare from "semver/functions/compare.js";
+import semverCompare from "semver/functions/compare";
 import { useRouter } from "vue-router";
 //
 import Tools from "./tools.vue";
+import { PkgInfo, VersionInfo } from "@/ajax/type";
 
 const router = useRouter();
 const packageStore = usePackageStore();
@@ -116,20 +118,23 @@ const updating = computed(() => packageStore.updating);
 const data = computed(() => appStore.package);
 
 // 开发依赖
-const dependencies = computed(() => data.value.dependencies || {});
+const dependencies = computed(() => data.value.dependencies);
 // 生产依赖
-const devDependencies = computed(() => data.value.dev_dependencies || {});
+const devDependencies = computed(() => data.value.dev_dependencies);
 
 // 查看依赖包的readme
-function handleViewReadme(info, is_dev) {
-  let name = encodeURIComponent(info.name);
+function handleViewReadme(info: PkgInfo, is_dev: number) {
+  const name = encodeURIComponent(info.name);
   router.push({ path: `/${is_dev ? 1 : 0}/${name}/readme` });
 }
 
 // 对象转数组遍历
 // is_compare： 单个依赖的版本信息格式
-function formatValues(obj, is_compare) {
-  let res = Object.values(obj);
+function formatValues<T extends PkgInfo | VersionInfo>(
+  obj: Record<string, T>,
+  is_compare: boolean
+): T[] {
+  const res = Object.values(obj);
 
   if (is_compare) {
     res.sort((a, b) => semverCompare(a.version, b.version));
@@ -138,23 +143,25 @@ function formatValues(obj, is_compare) {
   return res;
 }
 // 复制当前版本
-function handleCopy(info, v) {
-  let name = info.name + "@" + v.version;
-  navigator.clipboard.writeText(name).then(() => {
-    ElMessage.success("复制成功!");
-  });
-}
+// function handleCopy(info, v) {
+//   let name = info.name + "@" + v.version;
+//   navigator.clipboard.writeText(name).then(() => {
+//     ElMessage.success("复制成功!");
+//   });
+// }
 
 /**
  * 指定更新到某个版本
  */
-function handleUpdate(info, version) {
+function handleUpdate(info: PkgInfo, version: VersionInfo) {
   if (updating.value[info.name]) {
     ElMessage.warning("正在更新，请稍后!");
     return;
   }
 
-  packageStore.updateUpdating(info.name, { version: version.version });
+  packageStore.updateUpdating(info.name, {
+    version: version.version,
+  });
   packageStore.installPackage({ ...info, version: version.version }).then(
     () => {
       // 删除成功

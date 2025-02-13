@@ -169,7 +169,7 @@ const optimizeLayout = () => {
  */
 async function getRelationData() {
   // 从缓存中取
-  let data = appStore.relationPkg[props.name];
+  const data = appStore.relationPkg[props.name];
   if (data) {
     relationData = { ...data };
     formatFlowData({ ...data, id: uuidv4() });
@@ -177,10 +177,10 @@ async function getRelationData() {
   }
   loading.value = true;
   try {
-    let params = {
+    const params = {
       name: props.name,
     };
-    let res = await ajax.get("/api/pkg/graph", { params });
+    const res = await ajax.get("/api/pkg/graph", { params });
     if (res.success) {
       ElMessage.success("获取成功!");
       // 存储当前节点数据

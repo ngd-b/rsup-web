@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { ajax } from "@/ajax/index.js";
 import { useAppStore } from "@/stores/index.js";
-import { EnvConfig, PkgInfo, UpdatePkg, RemovePkg } from "@/ajax/type/index";
+import { EnvConfig, UpdatePkg, RemovePkg } from "@/ajax/type/index";
 
 type Updating = Pick<UpdatePkg, "name" | "version">;
 
 interface Store {
-  env: Partial<EnvConfig>;
-  updating: Map<string, Partial<Updating> | null>;
+  env: EnvConfig;
+  updating: Record<string, Partial<Updating> | null>;
 }
 /**
  * 依赖管理
@@ -20,16 +20,16 @@ export const usePackageStore = defineStore("package", {
       // 环境变量
       env: {},
       // 正在升级的依赖
-      updating: new Map(),
+      updating: {},
     };
   },
   actions: {
-    updateUpdating(name: string, payload: Updating) {
-      this.updating.set(name, payload);
+    updateUpdating(name: string, payload: Partial<Updating> | null) {
+      this.updating[name] = payload;
     },
     updateBatchUpdating(payload: Updating[], loading = true) {
       payload.forEach((item) => {
-        this.updating.set(item.name, loading ? item : null);
+        this.updating[item.name] = loading ? item : null;
       });
     },
     /**
@@ -105,7 +105,7 @@ export const usePackageStore = defineStore("package", {
      */
     deletePackage(pkg: RemovePkg) {
       return new Promise((resolve, reject) => {
-        let params = {
+        const params = {
           name: pkg.name,
           is_dev: pkg.is_dev,
         };

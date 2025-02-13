@@ -36,27 +36,31 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 // import { ajax } from "@/ajax/index.js";
 import useAjax from "@/ajax/useAjax.js";
 import { useAppStore } from "@/stores/index.js";
 import { usePackageStore } from "@/views/home/stores/index.js";
+import { EnvConfig, EnvType, Env } from "@/ajax/type/index";
 
 const appStore = useAppStore();
 const packageStore = usePackageStore();
 // const loading = ref(false);
-const envData = ref({});
+const envData = ref<EnvConfig>({});
 
 const data = computed(() => appStore.package);
 
-const npmEnvData = computed(() =>
-  Object.keys(envData.value)
-    .filter((key) => key != "node")
-    .map((key) => envData.value[key])
-);
+const npmEnvData = computed<Env[]>(() => {
+  const npms = [EnvType.Npm, EnvType.Pnpm, EnvType.Yarn].filter(
+    (key) => envData.value[key]
+  );
 
-const { loading, data: apiData } = useAjax("get", "/api/env/get");
+  const data = npms.map((key) => envData.value[key]);
+  return data as Env[];
+});
+
+const { loading, data: apiData } = useAjax<EnvConfig>("get", "/api/env/get");
 
 watch([loading, apiData], ([loading, data]) => {
   if (!loading && data) {

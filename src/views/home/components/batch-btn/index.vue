@@ -1,7 +1,7 @@
 <template>
   <div class="batch-btn flex flex-col gap-15px p-x-20px">
     <template v-if="!data.manager_name">
-      <el-button type="primary" @click="handleClick('quick')">
+      <el-button type="primary" @click="handleClick(Type.Quick)">
         <span>一键安装</span>
       </el-button>
       <el-alert
@@ -15,7 +15,7 @@
       <el-tooltip :show-after="1000" content="建议升级，解决一些潜在的bug">
         <el-button
           type="primary"
-          @click="handleClick('update', { semver: 'patch' })"
+          @click="handleClick(Type.Update, { semver: 'patch' })"
           >一键版本(patch)升级</el-button
         >
       </el-tooltip>
@@ -26,7 +26,7 @@
       >
         <el-button
           type="warning"
-          @click="handleClick('update', { semver: 'minor' })"
+          @click="handleClick(Type.Update, { semver: 'minor' })"
           >一键版本(minor)升级</el-button
         >
       </el-tooltip>
@@ -37,7 +37,7 @@
       >
         <el-button
           type="danger"
-          @click="handleClick('update', { semver: 'major' })"
+          @click="handleClick(Type.Update, { semver: 'major' })"
           >一键版本(major)升级</el-button
         >
       </el-tooltip>
@@ -51,28 +51,35 @@
     />
   </template>
 </template>
-<script setup>
+<script setup lang="ts">
 import { useAppStore } from "@/stores/index.js";
 //
 import QuickInstll from "./quickInstallDialog.vue";
 import UpdateDeps from "./updateDepsDialog.vue";
 
-const TypeMapComponent = {
+enum Type {
+  Quick = "quick",
+  Update = "update",
+}
+type DialogData = Partial<{
+  semver: string;
+}>;
+const TypeMapComponent: Record<Type, Component> = {
   quick: QuickInstll,
   update: UpdateDeps,
 };
 const appStore = useAppStore();
 const data = computed(() => appStore.package);
-const dialog = reactive({
-  type: "",
+const dialog = reactive<{ type: Type; visible: boolean; data?: DialogData }>({
+  type: Type.Quick,
   visible: false,
   data: {},
 });
 
-const dynamicComponent = computed(() => {
+const dynamicComponent = computed<Component>(() => {
   return TypeMapComponent[dialog.type];
 });
-const handleClick = (type, data) => {
+const handleClick = (type: Type, data?: DialogData) => {
   dialog.type = type;
   dialog.visible = true;
   dialog.data = data;

@@ -16,11 +16,11 @@ export const useAppStore = defineStore("app", {
         name: "",
         version: "",
         description: "",
-        scripts: new Map<string, string>(),
+        scripts: {},
         // 当前项目的管理工具
         manager_name: "",
-        dependencies: new Map<string, PkgInfo>(),
-        dev_dependencies: new Map<string, PkgInfo>(),
+        dependencies: {},
+        dev_dependencies: {},
       },
       // // 依赖关系数据
       // // 避免重复查询

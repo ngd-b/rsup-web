@@ -50,9 +50,9 @@ class Api {
   get<T>(url: string, config?: AxiosRequestConfig): Promise<ResParams<T>> {
     return this.axios.get<ResParams<T>, ResParams<T>>(url, config);
   }
-  post<T>(
+  post<T, P>(
     url: string,
-    data?: any,
+    data?: P,
     config?: AxiosRequestConfig
   ): Promise<ResParams<T>> {
     return this.axios.post<ResParams<T>, ResParams<T>>(url, data, config);

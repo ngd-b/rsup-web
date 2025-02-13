@@ -9,10 +9,10 @@ export interface Env {
   is_cmd: boolean;
 }
 
-export interface EnvConfig {
-  node: Env | null;
-  npm: Env | null;
-  pnpm: Env | null;
-  /// yarn
-  yarn: Env | null;
+export enum EnvType {
+  Node = "node",
+  Npm = "npm",
+  Yarn = "yarn",
+  Pnpm = "pnpm",
 }
+export type EnvConfig = Partial<Record<EnvType, Env>>;
