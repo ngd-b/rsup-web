@@ -61,3 +61,17 @@ export interface Dist {
   tarball: string;
   integrity: string;
 }
+
+export interface UpdatePkg {
+  name: string;
+  version: string;
+  is_dev: boolean;
+  // 是否是切换依赖类型
+  // 开发依赖包、运行时依赖包
+  is_change?: boolean;
+}
+
+export interface RemovePkg {
+  name: string;
+  is_dev: boolean;
+}

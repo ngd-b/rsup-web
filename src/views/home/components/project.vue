@@ -27,9 +27,9 @@
     <p class="p-x-10px p-y-5px">{{ data.description }}</p>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { useAppStore } from "@/stores/index.js";
-import { usePackageStore } from "@/views/home/stores/index.js";
+import { usePackageStore } from "@/views/home/stores/index";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
 
@@ -47,7 +47,7 @@ const handleReload = () => {
     () => {
       isReload.value = false;
     },
-    (e) => {
+    () => {
       isReload.value = false;
     }
   );
