@@ -3,7 +3,6 @@
  * 接收、发送数据
  */
 import { Pkg } from "@/ajax/type/pkg";
-
 interface Config {
   name?: string;
 }
@@ -41,7 +40,10 @@ class Socket {
     }
     this.socket.close();
   }
-  on(type: string, callback: (data: any) => void) {
+  on<T extends keyof WebSocketEventMap>(
+    type: T,
+    callback: (event: WebSocketEventMap[T]) => void
+  ) {
     if (!this.socket) {
       throw new Error("WebSocket is not connected");
     }

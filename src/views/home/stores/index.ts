@@ -45,7 +45,7 @@ export const usePackageStore = defineStore("package", {
     reloadPackage() {
       return new Promise((resolve, reject) => {
         try {
-          ajax.post<string>("/api/pkg/reload").then((res) => {
+          ajax.post<string, null>("/api/pkg/reload").then((res) => {
             if (res.success) {
               resolve(res);
             } else {
@@ -70,7 +70,7 @@ export const usePackageStore = defineStore("package", {
 
       this.updateBatchUpdating(params);
       return new Promise((resolve, reject) => {
-        ajax.post<string[]>("/api/pkg/batchUpdate", params).then(
+        ajax.post<string[], UpdatePkg[]>("/api/pkg/batchUpdate", params).then(
           (res) => {
             this.updateBatchUpdating(params, false);
             if (res.success) {

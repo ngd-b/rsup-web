@@ -68,16 +68,16 @@ export default defineComponent({
       this.socket.connect(
         import.meta.env.VITE_SOCKET_URL || `ws://${window.location.host}/ws`
       );
-      this.socket.on("onmessage", this.handleReceiveData);
-      this.socket.on("onopen", () => {
+      this.socket.on<"message">("message", this.handleReceiveData);
+      this.socket.on<"open">("open", () => {
         ElMessage.success("连接成功!");
         console.log("open");
       });
-      this.socket.on("onclose", (e) => {
+      this.socket.on<"close">("close", (e) => {
         ElMessage.error("服务已断开!");
         console.error(e);
       });
-      this.socket.on("onerror", (e) => {
+      this.socket.on<"error">("error", (e) => {
         ElMessage.warning("连接失败，请检查服务是否启动!");
         console.error(e);
         // 10s后重新连接

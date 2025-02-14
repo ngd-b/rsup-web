@@ -20,7 +20,17 @@ export default typescriptEslint.config(
     ],
     files: ["**/*.{js,mjs,cjs,vue,jsx,ts,tsx}"],
     languageOptions: {
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        ref: "readonly",
+        computed: "readonly",
+        watch: "readonly",
+        watchEffect: "readonly",
+        ElMessage: "readonly",
+        ElNotification: "readonly",
+        reactive: "readonly",
+        component: "readonly",
+      },
       ecmaVersion: "latest",
       sourceType: "module",
       parser: vueEslintParser,
@@ -31,9 +41,9 @@ export default typescriptEslint.config(
     rules: {
       "no-undef": "warn",
       "no-unused-vars": "warn",
-      "vue/multi-word-component-names": "off",
+      "vue/multi-word-component-names": "warn",
       "prefer-const": "warn",
-      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-explicit-any": "error",
     },
   }
 );
