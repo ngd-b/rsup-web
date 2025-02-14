@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import { Pkg, PkgInfo } from "@/ajax/type/pkg";
+import { Pkg, RelationPkgInfo } from "@/ajax/type";
 
 interface Store {
   package: Pkg;
-  relationPkg: Map<string, PkgInfo | null>;
+  relationPkg: Record<string, RelationPkgInfo | null>;
 }
 
 export const useAppStore = defineStore("app", {
@@ -24,7 +24,7 @@ export const useAppStore = defineStore("app", {
       },
       // // 依赖关系数据
       // // 避免重复查询
-      relationPkg: new Map<string, PkgInfo | null>(),
+      relationPkg: {},
     };
   },
   actions: {
@@ -33,9 +33,9 @@ export const useAppStore = defineStore("app", {
       relation,
     }: {
       name: string;
-      relation: PkgInfo | null;
+      relation: RelationPkgInfo | null;
     }) {
-      this.relationPkg.set(name, relation);
+      this.relationPkg[name] = relation;
     },
     updatePackage(payload: Pkg) {
       this.package = payload;

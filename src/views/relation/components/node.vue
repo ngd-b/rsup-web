@@ -4,14 +4,14 @@
     <Handle
       v-if="!data.is_parent"
       type="target"
-      position="left"
+      :position="Position.Left"
       :connectable="false"
     />
     <!-- 叶子节点，没有连接点 -->
     <Handle
       v-if="!data.is_leaf"
       type="source"
-      position="right"
+      :position="Position.Right"
       :connectable="false"
     />
     <div
@@ -43,12 +43,10 @@
     </div>
   </div>
 </template>
-<script setup>
-import { Handle } from "@vue-flow/core";
-const props = defineProps({
-  data: Object,
-  isParent: Boolean,
-});
-console.log(props);
-const { data } = props;
+<script setup lang="ts">
+import { Handle, Position } from "@vue-flow/core";
+import type { NodeProps } from "@vue-flow/core";
+import type { NodeData } from "../type/index";
+
+const { data } = defineProps<NodeProps<NodeData>>();
 </script>

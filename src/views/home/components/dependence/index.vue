@@ -99,8 +99,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useAppStore } from "@/stores/index.js";
-import { usePackageStore } from "@/views/home/stores/index.js";
+import { useAppStore } from "@/stores/index";
+import { usePackageStore } from "@/views/home/stores/index";
 
 import semverCompare from "semver/functions/compare";
 import { useRouter } from "vue-router";

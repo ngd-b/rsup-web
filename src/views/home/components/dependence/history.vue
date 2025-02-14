@@ -15,7 +15,7 @@
   </div>
 </template>
 <script setup lang="ts">
-// import { useAppStore } from "@/stores/index.js";
+// import { useAppStore } from "@/stores/index";
 const { data = {} } = defineProps({
   data: Object,
 });

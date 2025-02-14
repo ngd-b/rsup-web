@@ -28,7 +28,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useAppStore } from "@/stores/index.js";
+import { useAppStore } from "@/stores/index";
 import { usePackageStore } from "@/views/home/stores/index";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";

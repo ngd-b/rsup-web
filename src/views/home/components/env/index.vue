@@ -38,10 +38,10 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-// import { ajax } from "@/ajax/index.js";
-import useAjax from "@/ajax/useAjax.js";
-import { useAppStore } from "@/stores/index.js";
-import { usePackageStore } from "@/views/home/stores/index.js";
+// import { ajax } from "@/ajax/index";
+import useAjax from "@/ajax/useAjax";
+import { useAppStore } from "@/stores/index";
+import { usePackageStore } from "@/views/home/stores/index";
 import { EnvConfig, EnvType, Env } from "@/ajax/type/index";
 
 const appStore = useAppStore();

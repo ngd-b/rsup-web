@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { ajax } from "@/ajax/index.js";
-import { useAppStore } from "@/stores/index.js";
+import { ajax } from "@/ajax/index";
+import { useAppStore } from "@/stores/index";
 import { EnvConfig, UpdatePkg, RemovePkg } from "@/ajax/type/index";
 
 type Updating = Pick<UpdatePkg, "name" | "version">;

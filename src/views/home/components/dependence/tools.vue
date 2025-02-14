@@ -73,7 +73,7 @@
 </template>
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { usePackageStore } from "@/views/home/stores/index.js";
+import { usePackageStore } from "@/views/home/stores/index";
 import { PkgInfo } from "@/ajax/type";
 
 interface Props {

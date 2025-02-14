@@ -52,7 +52,7 @@
   </template>
 </template>
 <script setup lang="ts">
-import { useAppStore } from "@/stores/index.js";
+import { useAppStore } from "@/stores/index";
 //
 import QuickInstll from "./quickInstallDialog.vue";
 import UpdateDeps from "./updateDepsDialog.vue";
