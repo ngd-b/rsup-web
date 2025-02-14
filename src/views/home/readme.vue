@@ -11,25 +11,27 @@
     <render-md :data="data.readme" />
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
-import { useAppStore } from "@/stores/index.js";
+import { useAppStore } from "@/stores/index";
 import { useRouter } from "vue-router";
+import { PkgInfo } from "@/ajax/type";
 
+interface Props {
+  is_dev: string;
+  name: string;
+}
 const router = useRouter();
-const props = defineProps({
-  is_dev: String,
-  name: String,
-});
+const props = defineProps<Props>();
 const appStore = useAppStore();
 
-const data = computed(() => {
+const data = computed<PkgInfo>(() => {
   const { dev_dependencies, dependencies } = appStore.package;
 
   if (props.is_dev == "1") {
-    return dev_dependencies ? dev_dependencies[props.name] : {};
+    return dev_dependencies[props.name];
   } else {
-    return dependencies ? dependencies[props.name] : {};
+    return dependencies[props.name];
   }
 });
 

@@ -41,20 +41,27 @@
     </template>
   </RsDialog>
 </template>
-<script setup>
-import { usePackageStore } from "@/views/home/stores/index.js";
+<script setup lang="ts">
+import { usePackageStore } from "@/views/home/stores/index";
 import { onMounted } from "vue";
-import { ajax } from "@/ajax/index.js";
-import { ElMessage } from "element-plus";
+import { ajax } from "@/ajax/index";
+import { ElMessage, FormInstance, FormRules } from "element-plus";
+import { Env, EnvType } from "@/ajax/type";
 
+interface FormProps {
+  manager_name: string;
+  is_registry: boolean;
+  registry: string;
+  params: string[];
+}
 const packageStore = usePackageStore();
-const form = ref({
+const form = ref<FormProps>({
   manager_name: "",
   is_registry: false,
   registry: "",
   params: [],
 });
-const rules = ref({
+const rules = ref<FormRules>({
   manager_name: [
     {
       required: true,
@@ -63,13 +70,16 @@ const rules = ref({
     },
   ],
 });
-const formRef = ref(null);
-const loading = ref(false);
-const npmEnvData = computed(() =>
-  Object.keys(packageStore.env)
-    .filter((key) => key != "node")
-    .map((key) => packageStore.env[key])
-);
+const formRef = ref<FormInstance>();
+const loading = ref<boolean>(false);
+const npmEnvData = computed<Env[]>(() => {
+  const npms = [EnvType.Npm, EnvType.Pnpm, EnvType.Yarn].filter(
+    (key) => packageStore.env[key]
+  );
+
+  const data = npms.map((key) => packageStore.env[key]);
+  return data as Env[];
+});
 
 const visible = defineModel({ type: Boolean, default: false });
 
@@ -79,10 +89,13 @@ onMounted(() => {
 
 const handleSubmit = async () => {
   try {
-    await formRef.value.validate();
+    await formRef.value!.validate();
     loading.value = true;
 
-    const res = await ajax.post("/api/pkg/quickInstall", form.value);
+    const res = await ajax.post<null, FormProps>(
+      "/api/pkg/quickInstall",
+      form.value
+    );
     if (res.success) {
       ElMessage.success("一键安装成功");
       handleClose();

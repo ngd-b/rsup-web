@@ -1,6 +1,4 @@
 <template>
-    <div class="h-full w-full"></div>
+  <div class="h-full w-full"></div>
 </template>
-<script setup>
-
-</script>
+<script setup lang="ts"></script>

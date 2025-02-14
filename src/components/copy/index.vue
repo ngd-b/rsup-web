@@ -3,20 +3,19 @@
     <slot></slot>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
+
+interface Props {
+  text: string;
+}
 defineOptions({
   name: "RsCopy",
   inheritAttrs: false,
 });
 
-const { text } = defineProps({
-  text: {
-    type: String,
-    default: "",
-  },
-});
-const { copy, copied } = useClipboard(text);
+const { text } = defineProps<Props>();
+const { copy, copied } = useClipboard({ source: text });
 
 watch(copied, (newValue) => {
   if (newValue) {

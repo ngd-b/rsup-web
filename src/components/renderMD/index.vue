@@ -1,13 +1,16 @@
 <template>
   <div v-html="content"></div>
 </template>
-<script setup>
+<script setup lang="ts">
 import MarkdownIt from "markdown-it";
-import Shiki from "@shikijs/markdown-it";
+// import Shiki from "@shikijs/markdown-it";
 // import "shiki/themes/vitesse-dark.mjs";
 // import "shiki/themes/vitesse-light.mjs";
 import { createHighlighter, bundledLanguages, bundledThemes } from "shiki";
 
+interface Props {
+  data: string;
+}
 defineOptions({
   name: "render-md",
 });
@@ -79,11 +82,9 @@ const md = MarkdownIt({
 //   })
 // );
 
-const props = defineProps({
-  data: String,
-});
+const props = defineProps<Props>();
 
-let content = ref("");
+const content = ref<string>("");
 watch(
   () => props.data,
   async () => {

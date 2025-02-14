@@ -42,7 +42,9 @@ export default defineConfig({
         // ...
       },
     }),
-    presetRemToPx({ baseFontSize: 4 }),
+    presetRemToPx({
+      baseFontSize: 4,
+    }),
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
 });

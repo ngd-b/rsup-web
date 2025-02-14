@@ -41,27 +41,31 @@
     </template>
   </RsDialog>
 </template>
-<script setup lang="jsx">
-import { usePackageStore } from "@/views/home/stores/index.js";
-import { useAppStore } from "@/stores/index.js";
+<script setup lang="tsx">
+import { usePackageStore } from "@/views/home/stores/index";
+import { useAppStore } from "@/stores/index";
 import { onMounted } from "vue";
 import { ElMessage } from "element-plus";
-import semverSatisfies from "semver/functions/satisfies.js";
+import semverSatisfies from "semver/functions/satisfies";
 import semverMinVersion from "semver/ranges/min-version";
 import sermverMaxSatisfying from "semver/ranges/max-satisfying";
+import { UpdatePkg } from "@/ajax/type";
 
+type DialogData = Partial<{
+  semver: string;
+}>;
+
+type Update = UpdatePkg & { oldVersion: string; is_up: boolean };
+interface Props {
+  data: DialogData;
+}
 const appStore = useAppStore();
 const packageStore = usePackageStore();
 
-const { data } = defineProps({
-  data: {
-    type: Object,
-    default: () => ({}),
-  },
-});
-const up_versions = ref([]);
-const visible = defineModel({ type: Boolean, default: false });
-const loading = ref(false);
+const { data } = defineProps<Props>();
+const up_versions = ref<Update[]>([]);
+const visible = defineModel<boolean>({ default: false });
+const loading = ref<boolean>(false);
 
 // 所有的依赖数据
 const depData = computed(() =>
@@ -76,9 +80,9 @@ onMounted(() => {
 });
 
 function collectUpVersions() {
-  let up_data = [];
+  const up_data: Update[] = [];
   depData.value.forEach((dep) => {
-    const { major, minor } = semverMinVersion(dep.version);
+    const { major, minor } = semverMinVersion(dep.version)!;
 
     // 确定过滤的版本
     let range = `*.*.*`;
@@ -91,11 +95,11 @@ function collectUpVersions() {
         break;
       default:
     }
-    let versions = Object.keys(dep.versions).filter((v) =>
+    const versions = Object.keys(dep.versions).filter((v) =>
       semverSatisfies(v, range)
     );
     // 选择最新的版本
-    let latest = sermverMaxSatisfying(versions, range);
+    const latest = sermverMaxSatisfying(versions, range)!;
     if (versions.length) {
       up_data.push({
         name: dep.name,
@@ -110,7 +114,7 @@ function collectUpVersions() {
   up_versions.value = up_data;
 }
 const handleSubmit = () => {
-  let params = up_versions.value.filter((item) => item.is_up);
+  const params = up_versions.value.filter((item) => item.is_up);
   if (params.length < 1) {
     ElMessage.warning("没有可升级的依赖");
     return;

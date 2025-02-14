@@ -15,13 +15,14 @@
     </template>
   </el-dialog>
 </template>
-<script setup>
+<script setup lang="ts">
+interface Props {
+  visible: boolean;
+}
 defineOptions({
   name: "RsDialog",
   inheritAttrs: false,
 });
 
-const { visible } = defineProps({
-  visible: Boolean,
-});
+const { visible } = defineProps<Props>();
 </script>

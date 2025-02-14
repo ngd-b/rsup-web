@@ -19,7 +19,7 @@
     </div>
   </div>
 </template>
-<script setup lang="js">
+<script setup lang="ts">
 import {
   VueFlow,
   useVueFlow,
@@ -27,27 +27,32 @@ import {
   Position,
   ConnectionMode,
 } from "@vue-flow/core";
+import type { Node as FlowNode, Edge as FlowEdge } from "@vue-flow/core";
 import { Background } from "@vue-flow/background";
-import { ajax } from "@/ajax/index.js";
+import { ajax } from "@/ajax/index";
 import { onMounted, reactive, watch } from "vue";
 import dagre from "@dagrejs/dagre";
 import { useRouter } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
-import { useAppStore } from "@/stores/index.js";
+import { useAppStore } from "@/stores/index";
+import type { RelationPkgInfo } from "@/ajax/type/index";
+import type { NodeData } from "./type";
+import { createRelationPkgInfo } from "@/ajax/type/index";
 
+interface Props {
+  name: string;
+}
 // 自定义
 import Node from "./components/node.vue";
 
 const appStore = useAppStore();
 const router = useRouter();
-const props = defineProps({
-  name: String,
-});
-let relationData = reactive({});
-const loading = ref(false);
+const props = defineProps<Props>();
+let relationData = reactive<RelationPkgInfo>(createRelationPkgInfo());
+const loading = ref<boolean>(false);
 // 节点、线
-const nodes = reactive([]);
-const edges = reactive([]);
+const nodes = reactive<FlowNode<NodeData>[]>([]);
+const edges = reactive<FlowEdge[]>([]);
 const { findNode, updateNode } = useVueFlow();
 
 onMounted(() => {
@@ -65,7 +70,7 @@ watch(rendered, (val) => {
  * 格式化流程节点、线数据
  *
  */
-const formatFlowData = (data) => {
+const formatFlowData = (data: RelationPkgInfo & { id: string }) => {
   const { id, name, relations, is_peer, version, is_loop } = data;
 
   // 使用name+version 作为唯一标识
@@ -88,16 +93,17 @@ const formatFlowData = (data) => {
     position: { x: Math.random() * 100, y: Math.random() * 100 },
   });
   relations.forEach((item) => {
-    item.id = uuidv4();
+    const child_id = uuidv4();
     edges.push({
+      id: uuidv4(),
       source: id,
-      target: item.id,
+      target: child_id,
       style: {
         stroke: item.is_loop ? "#f56c6c" : "#409eff",
       },
     });
     // 递归
-    formatFlowData(item);
+    formatFlowData({ ...item, id: child_id });
   });
 };
 /**
@@ -118,7 +124,7 @@ const optimizeLayout = () => {
   });
 
   nodes.forEach((node) => {
-    const { width, height } = findNode(node.id).dimensions;
+    const { width, height } = findNode(node.id)!.dimensions;
     graph.setNode(node.id, { width, height });
   });
   edges.forEach((edge) => {
@@ -127,10 +133,15 @@ const optimizeLayout = () => {
 
   dagre.layout(graph);
   // 根据层级设置位置
-  const rankMap = {};
+  const rankMap: Record<
+    string,
+    FlowNode<NodeData> & { width: number; height: number }
+  > = {};
   for (const node of nodes) {
     const { rank, width, height } = graph.node(node.id);
-
+    if (rank === undefined) {
+      continue;
+    }
     if (!rankMap[rank]) {
       rankMap[rank] = {
         ...node,
@@ -156,10 +167,12 @@ const optimizeLayout = () => {
     //   x: newNode.x - newNode.width / 2,
     //   y: newNode.y - newNode.height / 2 + rankMap[newNode.rank].height / 2,
     // };
+    const offsetHeight =
+      newNode.rank !== undefined ? rankMap[newNode.rank].height / 2 : 0;
     updateNode(node.id, {
       position: {
         x: newNode.x - newNode.width / 2,
-        y: newNode.y - newNode.height / 2 + rankMap[newNode.rank].height / 2,
+        y: newNode.y - newNode.height / 2 + offsetHeight,
       },
     });
   }
@@ -169,7 +182,7 @@ const optimizeLayout = () => {
  */
 async function getRelationData() {
   // 从缓存中取
-  let data = appStore.relationPkg[props.name];
+  const data = appStore.relationPkg[props.name];
   if (data) {
     relationData = { ...data };
     formatFlowData({ ...data, id: uuidv4() });
@@ -177,10 +190,10 @@ async function getRelationData() {
   }
   loading.value = true;
   try {
-    let params = {
+    const params = {
       name: props.name,
     };
-    let res = await ajax.get("/api/pkg/graph", { params });
+    const res = await ajax.get<RelationPkgInfo>("/api/pkg/graph", { params });
     if (res.success) {
       ElMessage.success("获取成功!");
       // 存储当前节点数据

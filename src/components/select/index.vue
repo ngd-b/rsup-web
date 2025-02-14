@@ -8,20 +8,23 @@
     />
   </el-select>
 </template>
-<script setup>
-import * as Enums from "@/components/enum.js";
-import { watch } from "less";
+<script setup lang="ts">
+import DicMap from "@/components/enum";
+import type { SelectItem } from "@/components/enum.ts";
 import { watchEffect } from "vue";
 
+interface Props {
+  code: string;
+}
 defineOptions({
   name: "RsSelect",
   inheritAttrs: false,
 });
-const { code } = defineProps({ code: { type: String, required: true } });
+const { code } = defineProps<Props>();
 
-const data = ref([]);
+const data = ref<SelectItem[]>([]);
 
 watchEffect(() => {
-  data.value = Enums[code] || [];
+  data.value = DicMap[code] || [];
 });
 </script>

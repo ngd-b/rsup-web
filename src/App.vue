@@ -20,20 +20,21 @@
     </router-view>
   </el-config-provider>
 </template>
-<script>
+<script lang="ts">
 import { ElConfigProvider } from "element-plus";
 import { defineComponent, ref } from "vue";
-import zhCn from "element-plus/dist/locale/zh-cn.mjs";
-import Socket from "@/stores/socket.js";
-import { useAppStore } from "@/stores/index.js";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
+import Socket from "@/stores/socket";
+import type { Socket as SocketApp } from "@/stores/socket";
+import { useAppStore } from "@/stores/index";
 
 export default defineComponent({
   components: {
     ElConfigProvider,
   },
   setup() {
-    let socket = ref(null);
-    socket.value = new Socket();
+    const socket = ref<SocketApp>();
+    socket.value = new Socket({});
 
     // store 实例
     const appStore = useAppStore();
@@ -55,26 +56,28 @@ export default defineComponent({
     /**
      * 接收到数据
      */
-    handleReceiveData(data) {
-      data = JSON.parse(data.data);
-
-      this.appStore.updatePackage(data);
+    handleReceiveData(data: MessageEvent<string>) {
+      this.appStore.updatePackage(JSON.parse(data.data));
     },
 
     initSocket() {
+      if (!this.socket) {
+        console.error("socket is null");
+        return;
+      }
       this.socket.connect(
         import.meta.env.VITE_SOCKET_URL || `ws://${window.location.host}/ws`
       );
-      this.socket.on("onmessage", this.handleReceiveData);
-      this.socket.on("onopen", () => {
+      this.socket.on<"message">("message", this.handleReceiveData);
+      this.socket.on<"open">("open", () => {
         ElMessage.success("连接成功!");
         console.log("open");
       });
-      this.socket.on("onclose", (e) => {
+      this.socket.on<"close">("close", (e) => {
         ElMessage.error("服务已断开!");
         console.error(e);
       });
-      this.socket.on("onerror", (e) => {
+      this.socket.on<"error">("error", (e) => {
         ElMessage.warning("连接失败，请检查服务是否启动!");
         console.error(e);
         // 10s后重新连接

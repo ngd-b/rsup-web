@@ -15,7 +15,7 @@
     <Summary class="flex-grow-1 flex-basis-400px overflow-auto p-x-15px" />
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import Dependence from "./components/dependence/index.vue";
 import EnvConfig from "./components/env/index.vue";
 import Summary from "./components/summary/index.vue";

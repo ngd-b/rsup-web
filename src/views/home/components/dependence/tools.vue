@@ -15,7 +15,7 @@
       >
         <div
           class="i-material-symbols:home-outline"
-          @click="handleClickTools('home')"
+          @click="handleClickTools(ToolsType.Home)"
         />
       </div>
     </el-tooltip>
@@ -25,7 +25,7 @@
       >
         <div
           class="i-material-symbols:conversion-path"
-          @click="handleClickTools('relation')"
+          @click="handleClickTools(ToolsType.Relation)"
         />
       </div>
     </el-tooltip>
@@ -40,7 +40,7 @@
         >
           <div
             class="i-material-symbols:transform"
-            @click="handleClickTools('transfer')"
+            @click="handleClickTools(ToolsType.Transfer)"
           />
         </div>
       </el-tooltip>
@@ -52,7 +52,7 @@
         >
           <div
             class="i-material-symbols:restore-page-outline"
-            @click="handleClickTools('restore')"
+            @click="handleClickTools(ToolsType.Restore)"
           />
         </div>
       </el-tooltip>
@@ -64,40 +64,48 @@
         >
           <div
             class="i-material-symbols:delete-outline"
-            @click="handleClickTools('delete')"
+            @click="handleClickTools(ToolsType.Delete)"
           />
         </div>
       </el-tooltip>
     </template>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { useRouter } from "vue-router";
-import { usePackageStore } from "@/views/home/stores/index.js";
+import { usePackageStore } from "@/views/home/stores/index";
+import { PkgInfo } from "@/ajax/type";
+
+interface Props {
+  data: PkgInfo;
+}
+enum ToolsType {
+  Home = "home",
+  Relation = "relation",
+  Delete = "delete",
+  Restore = "restore",
+  Transfer = "transfer",
+}
 
 const packageStore = usePackageStore();
 const router = useRouter();
-const { data = {} } = defineProps({
-  data: {
-    type: Object,
-  },
-});
-const loadings = ref({
+const { data } = defineProps<Props>();
+const loadings = ref<Partial<Record<ToolsType, boolean>>>({
   delete: false,
   restore: false,
   transfer: false,
 });
 
 const root = ref(null);
-const handleClickTools = (type) => {
+const handleClickTools = (type: ToolsType) => {
   switch (type) {
-    case "home":
+    case ToolsType.Home:
       window.open(data.homepage, "__blank");
       break;
-    case "relation":
+    case ToolsType.Relation:
       router.push({ path: `/${encodeURIComponent(data.name)}/relation` });
       break;
-    case "delete":
+    case ToolsType.Delete:
       if (loadings.value.delete) {
         ElMessage.warning("正在删除，请稍后!");
         return;
@@ -113,7 +121,7 @@ const handleClickTools = (type) => {
         }
       );
       break;
-    case "restore":
+    case ToolsType.Restore:
       if (loadings.value.restore) {
         ElMessage.warning("正在恢复安装，请稍后!");
         return;
@@ -130,7 +138,7 @@ const handleClickTools = (type) => {
         }
       );
       break;
-    case "transfer":
+    case ToolsType.Transfer:
       if (loadings.value.transfer) {
         ElMessage.warning("正在切换安装，请稍后!");
         return;

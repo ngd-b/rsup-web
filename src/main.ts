@@ -1,12 +1,12 @@
 import { createApp } from "vue";
 // app
-import App from "./App.vue";
+import App from "@/App.vue";
 import "./base.less";
 import "@unocss/reset/normalize.css";
 import "virtual:uno.css";
-import routes from "./routes";
+import routes from "@/routes";
 import { createPinia } from "pinia";
-import Components from "@/components/index.js";
+import Components from "@/components";
 // vue-flow
 /* these are necessary styles for vue flow */
 import "@vue-flow/core/dist/style.css";
