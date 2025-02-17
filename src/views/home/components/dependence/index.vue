@@ -71,7 +71,10 @@
               :key="v.version"
             >
               <el-tooltip content="点击复制版本号" :show-after="300">
-                <RsCopy :text="`${info.name}@${v.version}`">
+                <RsCopy
+                  class="inline-block"
+                  :text="`${info.name}@${v.version}`"
+                >
                   <span
                     class="cursor-pointer border border-rd-3 border-solid border-r-none p-l-5 p-r-5 font-size-12 color-blue-500"
                     >{{ v.version }}</span

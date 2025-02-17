@@ -38,7 +38,6 @@ export default defineComponent({
 
     // store 实例
     const appStore = useAppStore();
-
     return {
       locale: zhCn,
       socket,
@@ -46,6 +45,8 @@ export default defineComponent({
     };
   },
   mounted() {
+    // 加载依赖关系
+    this.appStore.loadPkgRelation();
     // 发起socket通信
     this.initSocket();
   },

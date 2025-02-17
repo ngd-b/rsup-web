@@ -14,7 +14,7 @@ class Api {
   private axios: AxiosInstance;
   constructor(config: AxiosRequestConfig) {
     this.axios = Axios.create({
-      timeout: 60 * 1000,
+      timeout: 5 * 60 * 1000,
       ...config,
     });
     // 拦截器

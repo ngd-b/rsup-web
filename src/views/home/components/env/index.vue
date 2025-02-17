@@ -2,7 +2,7 @@
   <div class="home-env">
     <div class="env-item">
       <div
-        class="env-item-title flex gap-5px flex-items-center b-rd-5px bg-gray-200 p-x-15px p-y-5px"
+        class="env-item-title flex gap-5px flex-items-center b-rd-5px bg-gray-100 p-x-15px p-y-5px"
       >
         <span>Node</span>
         <el-tooltip content="当前系统Node版本">
@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="env-item">
-      <div class="env-item-title b-rd-5px bg-gray-200 p-x-15px p-y-5px">
+      <div class="env-item-title b-rd-5px bg-gray-100 p-x-15px p-y-5px">
         <span>依赖管理工具</span>
       </div>
       <div class="env-item-content flex flex-col gap-10px p-15px op-70">

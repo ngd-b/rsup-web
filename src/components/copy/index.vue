@@ -11,7 +11,7 @@ interface Props {
 }
 defineOptions({
   name: "RsCopy",
-  inheritAttrs: false,
+  // inheritAttrs: false,
 });
 
 const { text } = defineProps<Props>();
