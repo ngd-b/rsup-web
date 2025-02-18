@@ -1,23 +1,36 @@
 <template>
-  <div
-    class="fixed right-10px top-15px flex cursor-pointer gap-10px flex-items-center b-rd-15px p-x-15px p-y-5px shadow"
-  >
-    <div
-      @click="handleViewGithub"
-      class="i-simple-icons:github h-20px w-20px"
-    ></div>
-  </div>
   <el-config-provider size="small" :z-index="3000" :locale="locale">
-    <router-view v-slot="{ Component }">
-      <template v-if="Component">
-        <Transition mode="out-in" name="el-fade-in">
-          <Suspense>
-            <component :is="Component" />
-            <template #fallback> Loading... </template>
-          </Suspense>
-        </Transition>
-      </template>
-    </router-view>
+    <div class="h-full w-full flex flex-col overflow-hidden">
+      <div
+        class="header z-999 flex flex-basis-60px flex-items-center p-x-20px shadow"
+      >
+        <div class="logo flex flex-items-center">
+          <span class="font-size-20px font-bold">Rsup</span>
+        </div>
+        <div class="flex flex-1 justify-end flex-items-center">
+          <div
+            class="flex cursor-pointer gap-10px flex-items-center b-rd-15px p-x-15px p-y-5px shadow"
+          >
+            <div
+              @click="handleViewGithub"
+              class="i-simple-icons:github h-20px w-20px"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 overflow-hidden">
+        <router-view v-slot="{ Component }">
+          <template v-if="Component">
+            <Transition mode="out-in" name="el-fade-in">
+              <Suspense>
+                <component :is="Component" />
+                <template #fallback> Loading... </template>
+              </Suspense>
+            </Transition>
+          </template>
+        </router-view>
+      </div>
+    </div>
   </el-config-provider>
 </template>
 <script lang="ts">
@@ -46,7 +59,7 @@ export default defineComponent({
   },
   mounted() {
     // 加载依赖关系
-    this.appStore.loadPkgRelation();
+    // this.appStore.loadPkgRelation();
     // 发起socket通信
     this.initSocket();
   },

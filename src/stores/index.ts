@@ -34,9 +34,13 @@ export const useAppStore = defineStore("app", {
       relation,
     }: {
       name: string;
-      relation: RelationPkgInfo;
+      relation?: RelationPkgInfo;
     }) {
-      this.relationPkg[name] = relation;
+      if (relation) {
+        this.relationPkg[name] = relation;
+      } else {
+        Reflect.deleteProperty(this.relationPkg, name);
+      }
     },
     updatePackage(payload: Pkg) {
       this.package = payload;

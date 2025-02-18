@@ -47,7 +47,7 @@ const handleReload = () => {
     () => {
       isReload.value = false;
       // 重新加载依赖关系
-      appStore.loadPkgRelation();
+      // appStore.loadPkgRelation();
     },
     () => {
       isReload.value = false;

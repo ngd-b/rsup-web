@@ -10,9 +10,9 @@
     </div>
 
     <!-- 依赖信息 -->
-    <Dependence class="flex-grow-1 flex-basis-500px overflow-auto p-x-15px" />
+    <Dependence class="flex-grow-1 flex-basis-500px overflow-auto p-15px" />
     <!-- 依赖排行榜 -->
-    <Summary class="flex-grow-1 flex-basis-400px overflow-auto p-x-15px" />
+    <Summary class="flex-grow-1 flex-basis-400px overflow-auto p-15px" />
   </div>
 </template>
 <script setup lang="ts">

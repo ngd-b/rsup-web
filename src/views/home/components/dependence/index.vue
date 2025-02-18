@@ -1,11 +1,15 @@
 <template>
   <div class="h-full w-full">
     <div :key="index" v-for="(dep, index) in [dependencies, devDependencies]">
-      <h3>
-        {{ index ? "devDependencies" : "dependencies" }} ({{
-          formatValues(dep, false).length
-        }})
-      </h3>
+      <el-affix :offset="60">
+        <div class="flex gap-5px flex-items-center bg-#fff p-10px">
+          <span class="font-bold">{{
+            ["dependencies", "devDependencies"][index]
+          }}</span>
+          <span>({{ formatValues(dep, false).length }})</span>
+        </div>
+      </el-affix>
+
       <div
         class="version-item mb-10"
         v-for="info in formatValues<PkgInfo>(dep, false)"
@@ -170,7 +174,7 @@ function handleUpdate(info: PkgInfo, version: VersionInfo) {
       // 删除成功
       packageStore.updateUpdating(info.name, null);
       // 更新成功后，之前查询的依赖关系图
-      appStore.updateRelationPkg({ name: info.name, relation: null });
+      appStore.updateRelationPkg({ name: info.name });
     },
     () => {
       packageStore.updateUpdating(info.name, null);
