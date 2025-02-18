@@ -1,36 +1,13 @@
 <template>
   <div class="summary-relation box-border h-full w-full">
-    <div class="flex flex-col">
-      <div class="h-32px flex flex-items-center b-rd-5px bg-gray-100 p-l-15px">
-        <span class="font-bold">Modules({{ total }})</span>
-      </div>
-      <div class="flex flex-1 flex-col gap-10px overflow-auto p-y-5px p-l-5px">
-        <div class="realtion-item" v-for="item in summaryData" :key="item.name">
-          <div
-            class="h-28px flex gap-5px flex-items-center b-rd-5px bg-gray-100 p-x-10px"
-          >
-            <span>{{ item.name }}</span>
-            <template v-if="item.versions.length < 2">
-              <el-tag type="primary">{{ item.version }}</el-tag>
-            </template>
-          </div>
-          <template v-if="item.versions.length > 1">
-            <div
-              v-for="info in item.versions"
-              :key="`${item.name}@${info.version}`"
-              class="m-l-15px m-t-5px h-28px b-rd-5px bg-gray-100 p-x-10px"
-            >
-              <span>{{ info.name }}@{{ info.version }}</span>
-            </div>
-          </template>
-        </div>
-      </div>
-    </div>
+    <ModuleTree />
   </div>
 </template>
 <script setup lang="ts">
 import { RelationPkgInfo } from "@/ajax/type";
 import { useAppStore } from "@/stores/index";
+//
+import ModuleTree from "./moduleTree.vue";
 
 // 统计数据对象不需要嵌套的关系
 type SummaryRelation = Omit<RelationPkgInfo, "relations"> & {
@@ -44,9 +21,6 @@ const appStore = useAppStore();
 
 const data = computed(() => appStore.relationPkg);
 const summaryData = reactive<Record<string, SummaryRelation>>({});
-const total = computed(() => {
-  return Object.keys(summaryData).length;
-});
 
 onMounted(() => {});
 
@@ -98,12 +72,3 @@ function summaryRelation(data: RelationPkgInfo[], parent?: string) {
   });
 }
 </script>
-<style lang="less" scoped>
-.summary-relation {
-  .realtion-item {
-    &:nth-of-type(2n + 1) {
-      // @apply bg-gray-200;
-    }
-  }
-}
-</style>

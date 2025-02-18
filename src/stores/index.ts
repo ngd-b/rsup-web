@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
-import { Pkg, RelationPkgInfo } from "@/ajax/type";
+import { LockPkg, Pkg, RelationPkgInfo } from "@/ajax/type";
 import { ajax } from "@/ajax/index";
 
 interface Store {
+  // 项目依赖包信息
   package: Pkg;
   relationPkg: Record<string, RelationPkgInfo>;
+  lockPackage: LockPkg;
 }
 
 export const useAppStore = defineStore("app", {
@@ -26,6 +28,11 @@ export const useAppStore = defineStore("app", {
       // // 依赖关系数据
       // // 避免重复查询
       relationPkg: {},
+      lockPackage: {
+        name: "",
+        version: 0,
+        packages: {},
+      },
     };
   },
   actions: {
@@ -48,6 +55,8 @@ export const useAppStore = defineStore("app", {
     /**
      * 加载所有的依赖关系数据
      *
+     * 太耗时了，数据没必要
+     *
      * @returns
      */
     async loadPkgRelation() {
@@ -63,6 +72,24 @@ export const useAppStore = defineStore("app", {
               ElMessage.error("重新加载失败，可点击查看更新日志!");
             }
           });
+      } catch (e) {
+        //
+        ElMessage.error("接口调用失败!");
+        console.error(e);
+      }
+    },
+    /**
+     * 加载依赖lock文件
+     */
+    async loadLockPkgData() {
+      try {
+        ajax.get<LockPkg>("/api/pkg/lock").then((res) => {
+          if (res.success) {
+            this.lockPackage = res.data;
+          } else {
+            ElMessage.error("重新加载失败，可点击查看更新日志!");
+          }
+        });
       } catch (e) {
         //
         ElMessage.error("接口调用失败!");

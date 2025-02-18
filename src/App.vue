@@ -60,6 +60,8 @@ export default defineComponent({
   mounted() {
     // 加载依赖关系
     // this.appStore.loadPkgRelation();
+    // 加载lock文件
+    this.appStore.loadLockPkgData();
     // 发起socket通信
     this.initSocket();
   },

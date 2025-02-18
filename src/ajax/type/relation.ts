@@ -22,3 +22,9 @@ export interface RelationPkgInfo {
   // 依赖路径
   path: string;
 }
+
+export interface LockPkg {
+  name: string;
+  version: number;
+  packages: Record<string, RelationPkgInfo>;
+}
