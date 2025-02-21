@@ -49,6 +49,7 @@ import { ElMessage } from "element-plus";
 import semverSatisfies from "semver/functions/satisfies";
 import semverMinVersion from "semver/ranges/min-version";
 import sermverMaxSatisfying from "semver/ranges/max-satisfying";
+import sermverValidRange from "semver/ranges/valid";
 import { UpdatePkg } from "@/ajax/type";
 
 type DialogData = Partial<{
@@ -81,36 +82,40 @@ onMounted(() => {
 
 function collectUpVersions() {
   const up_data: Update[] = [];
-  depData.value.forEach((dep) => {
-    const { major, minor } = semverMinVersion(dep.version)!;
 
-    // 确定过滤的版本
-    let range = `*.*.*`;
-    switch (data.semver) {
-      case "patch":
-        range = `${major}.${minor}.*`;
-        break;
-      case "minor":
-        range = `${major}.*.*`;
-        break;
-      default:
-    }
-    const versions = Object.keys(dep.versions).filter((v) =>
-      semverSatisfies(v, range)
-    );
-    // 选择最新的版本
-    const latest = sermverMaxSatisfying(versions, range)!;
-    if (versions.length) {
-      up_data.push({
-        name: dep.name,
-        version: latest,
-        oldVersion: dep.version,
-        is_dev: dep.is_dev,
-        is_change: false,
-        is_up: true,
-      });
-    }
-  });
+  depData.value
+    .filter((dep) => {
+      return sermverValidRange(dep.version);
+    })
+    .forEach((dep) => {
+      const { major, minor } = semverMinVersion(dep.version) || {};
+      // 确定过滤的版本
+      let range = `*.*.*`;
+      switch (data.semver) {
+        case "patch":
+          range = `${major}.${minor}.*`;
+          break;
+        case "minor":
+          range = `${major}.*.*`;
+          break;
+        default:
+      }
+      const versions = Object.keys(dep.versions).filter((v) =>
+        semverSatisfies(v, range)
+      );
+      // 选择最新的版本
+      const latest = sermverMaxSatisfying(versions, range)!;
+      if (versions.length) {
+        up_data.push({
+          name: dep.name,
+          version: latest,
+          oldVersion: dep.version,
+          is_dev: dep.is_dev,
+          is_change: false,
+          is_up: true,
+        });
+      }
+    });
   up_versions.value = up_data;
 }
 const handleSubmit = () => {
