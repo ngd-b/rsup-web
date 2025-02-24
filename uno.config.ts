@@ -11,9 +11,10 @@ import {
 import presetRemToPx from "@unocss/preset-rem-to-px";
 
 export default defineConfig({
-  shortcuts: [
+  shortcuts: {
     // ...
-  ],
+    "text-ellipsis": "overflow-hidden text-ellipsis whitespace-nowrap",
+  },
   theme: {
     colors: {
       // ...

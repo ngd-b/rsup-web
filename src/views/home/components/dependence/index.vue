@@ -1,14 +1,15 @@
 <template>
   <div class="h-full w-full flex flex-col">
     <div :key="index" v-for="(dep, index) in [dependencies, devDependencies]">
-      <div class="flex gap-5px flex-items-center bg-#fff">
+      <div class="flex cursor-pointer gap-5px flex-items-center bg-#fff">
         <i-ep-ArrowDown
           class="transition-duration-100"
           :class="{ 'rotate--90 ': collapsed[index] }"
+          @click="handleCollapsedChange(index)"
         />
         <div
-          @click="() => (collapsed[index] = !collapsed[index])"
-          class="flex flex-1 cursor-pointer gap-10px flex-items-center b-rd-3px p-y-3px p-l-5px hover:bg-gray-100"
+          @click="handleCollapsedChange(index)"
+          class="flex flex-1 gap-10px flex-items-center b-rd-3px p-y-3px p-l-5px hover:bg-gray-100"
         >
           <span class="font-bold">{{
             ["Dependencies", "DevDependencies"][index]
@@ -187,4 +188,10 @@ function handleUpdate(info: PkgInfo, version: VersionInfo) {
     }
   );
 }
+/**
+ * 切换折叠
+ */
+const handleCollapsedChange = (index: number) => {
+  collapsed.value[index] = !collapsed.value[index];
+};
 </script>
