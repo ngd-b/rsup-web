@@ -1,6 +1,6 @@
 <template>
   <div class="h-full w-full flex flex-col">
-    <div :key="index" v-for="(dep, index) in [dependencies, devDependencies]">
+    <div :key="index" v-for="(dep, index) in dependenciesData">
       <div class="flex cursor-pointer gap-5px flex-items-center bg-#fff">
         <i-ep-ArrowDown
           class="transition-duration-100"
@@ -14,15 +14,13 @@
           <span class="font-bold">{{
             ["Dependencies", "DevDependencies"][index]
           }}</span>
-          <span class="font-size-16px font-bold">{{
-            formatValues(dep, false).length
-          }}</span>
+          <span class="font-size-16px font-bold">{{ dep.length }}</span>
         </div>
       </div>
       <template v-if="!collapsed[index]">
         <div
           class="version-item mb-10 overflow-hidden pl-10px transition-duration-100"
-          v-for="info in formatValues<PkgInfo>(dep, false)"
+          v-for="info in dep"
           :key="info.name"
         >
           <div class="flex flex-col">
@@ -71,7 +69,10 @@
               </div>
             </div>
             <!-- 操作 -->
-            <Tools class="m-l-30px m-t-10px" :data="info" />
+            <Tools
+              class="m-l-30px m-t-10px"
+              :data="{ ...info, versions: {} }"
+            />
           </div>
 
           <div class="p-l-30" v-if="info.is_finish">
@@ -82,10 +83,7 @@
             </div>
 
             <div class="mt-10 flex flex-wrap gap-10">
-              <div
-                v-for="v in formatValues<VersionInfo>(info.versions, true)"
-                :key="v.version"
-              >
+              <div v-for="v in info.versions" :key="v.version">
                 <el-tooltip content="点击复制版本号" :show-after="300">
                   <RsCopy
                     class="inline-block"
@@ -120,13 +118,13 @@
 </template>
 <script setup lang="ts">
 import { useAppStore } from "@/stores/index";
+import type { Dependence } from "@/stores/index";
 import { usePackageStore } from "@/views/home/stores/index";
 
-import semverCompare from "semver/functions/compare";
 import { useRouter } from "vue-router";
 //
 import Tools from "./tools.vue";
-import { PkgInfo, VersionInfo } from "@/ajax/type";
+import { VersionInfo } from "@/ajax/type";
 
 const router = useRouter();
 const packageStore = usePackageStore();
@@ -136,38 +134,20 @@ const collapsed = ref<[boolean, boolean]>([false, false]);
 // const updating = ref({});
 const updating = computed(() => packageStore.updating);
 
-const data = computed(() => appStore.package);
-
-// 开发依赖
-const dependencies = computed(() => data.value.dependencies);
-// 生产依赖
-const devDependencies = computed(() => data.value.dev_dependencies);
+const dependenciesData = computed<[Dependence[], Dependence[]]>(
+  () => appStore.getDependencies
+);
 
 // 查看依赖包的readme
-function handleViewReadme(info: PkgInfo, is_dev: number) {
+function handleViewReadme(info: Dependence, is_dev: number) {
   const name = encodeURIComponent(info.name);
   router.push({ path: `/${is_dev ? 1 : 0}/${name}/readme` });
-}
-
-// 对象转数组遍历
-// is_compare： 单个依赖的版本信息格式
-function formatValues<T extends PkgInfo | VersionInfo>(
-  obj: Record<string, T>,
-  is_compare: boolean
-): T[] {
-  const res = Object.values(obj);
-
-  if (is_compare) {
-    res.sort((a, b) => semverCompare(a.version, b.version));
-  }
-
-  return res;
 }
 
 /**
  * 指定更新到某个版本
  */
-function handleUpdate(info: PkgInfo, version: VersionInfo) {
+function handleUpdate(info: Dependence, version: VersionInfo) {
   if (updating.value[info.name]) {
     ElMessage.warning("正在更新，请稍后!");
     return;
