@@ -102,7 +102,7 @@ export default defineConfig((): UserConfig => {
       host: "0.0.0.0",
       port: 8081,
       // 项目启动后自动打开浏览器
-      open: true,
+      open: false,
     },
     // 构建配置项
     build: {

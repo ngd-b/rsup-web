@@ -1,5 +1,5 @@
 <template>
-  <div class="home h-full w-full flex flex-wrap gap-15px">
+  <div class="home h-full w-full flex flex-wrap gap-15px overflow-auto">
     <div
       class="flex flex-grow-1 flex-basis-300px flex-col gap-20px overflow-auto p-15px"
     >
