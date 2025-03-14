@@ -10,13 +10,33 @@
         :closable="false"
         description="确保对当前升级的依赖更新有了解，避免升级后项目运行出错!🥸"
       />
+      <br />
+      <el-alert
+        type="info"
+        :closable="false"
+        description="通常来说维护的依赖之间不会出现依赖冲突的问题，保持项目中依赖的及时更新，可以减少潜在问题，提升开发效率✍"
+      />
       <el-empty
         v-if="up_versions.length < 1"
         description="当前没有可升级的依赖!"
       />
-      <div class="flex flex-col gap-10px" v-else>
+      <div class="flex flex-col gap-10px p-5px" v-else>
+        <div class="flex items-center gap-5px">
+          <el-checkbox v-model="form.reinstall">重新安装</el-checkbox>
+          <el-tooltip
+            content="升级时移除`package-lock.json`和`node_modules`文件后指定最新版本再安装"
+          >
+            <el-Icon-InfoFilled class="h-14px w-14px" />
+          </el-tooltip>
+        </div>
+        <div class="flex flex-col gap-5px" v-if="form.reinstall">
+          <span class="">选择包管理器</span>
+          <RsRadio v-model="form.manager_name" :options="managerData">
+          </RsRadio>
+        </div>
+        <el-divider class="important-m-y-10px" />
         <div
-          class="flex justify-between flex-items-center p-5px"
+          class="flex justify-between flex-items-center"
           v-for="item in up_versions"
           :key="item.name"
         >
@@ -50,7 +70,8 @@ import semverSatisfies from "semver/functions/satisfies";
 import semverMinVersion from "semver/ranges/min-version";
 import sermverMaxSatisfying from "semver/ranges/max-satisfying";
 import sermverValidRange from "semver/ranges/valid";
-import { UpdatePkg } from "@/ajax/type";
+import { BatchUpdate, UpdatePkg } from "@/ajax/type";
+import { SelectItem } from "@/components/enum";
 
 type DialogData = Partial<{
   semver: string;
@@ -67,12 +88,25 @@ const { data } = defineProps<Props>();
 const up_versions = ref<Update[]>([]);
 const visible = defineModel<boolean>({ default: false });
 const loading = ref<boolean>(false);
+// 升级选择项
+const form = reactive<Pick<BatchUpdate, "reinstall" | "manager_name">>({
+  reinstall: false,
+  manager_name: appStore.package.manager_name,
+});
 
 // 所有的依赖数据
 const depData = computed(() =>
   Object.values(appStore.package.dependencies).concat(
     Object.values(appStore.package.dev_dependencies)
   )
+);
+// 包管理器列表
+const managerData = computed<SelectItem[]>(() =>
+  packageStore.managerData.map((item) => ({
+    ...item,
+    label: `${item.name}@${item.version}`,
+    value: item.name,
+  }))
 );
 onMounted(() => {
   // 计算当前可升级的依赖
@@ -125,7 +159,7 @@ const handleSubmit = () => {
     return;
   }
   // 更新当前升级状态
-  packageStore.batchUpdatePackage(params);
+  packageStore.batchUpdatePackage({ data: params, ...form });
 
   ElNotification({
     message: "依赖升级中,依赖中可查看升级状态",

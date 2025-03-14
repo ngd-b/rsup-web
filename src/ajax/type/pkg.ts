@@ -75,3 +75,9 @@ export interface RemovePkg {
   name: string;
   is_dev: boolean;
 }
+
+export interface BatchUpdate {
+  data: UpdatePkg[];
+  reinstall: boolean;
+  manager_name: string;
+}

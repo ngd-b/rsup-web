@@ -1,6 +1,7 @@
 export interface SelectItem {
   label: string;
   value: string;
+  [x: string]: any
 }
 /**
  * 依赖源地址

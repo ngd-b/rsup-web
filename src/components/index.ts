@@ -3,10 +3,11 @@ import RenderMD from "./renderMD/index.vue";
 // 公共组件
 import Dialog from "./dialog/index.vue";
 import Select from "./select/index.vue";
+import Radio from './radio/index.vue'
 import Copy from "./copy/index.vue";
 import { App } from "vue";
 
-const components = [RenderMD, Dialog, Select, Copy];
+const components = [RenderMD, Dialog, Select, Copy, Radio];
 export default {
   install(app: App) {
     components.forEach((component) => {

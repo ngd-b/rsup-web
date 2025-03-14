@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ajax } from "@/ajax/index";
 import { useAppStore } from "@/stores/index";
-import { EnvConfig, UpdatePkg, RemovePkg } from "@/ajax/type/index";
+import { EnvConfig, UpdatePkg, RemovePkg, EnvType, Env, BatchUpdate } from "@/ajax/type/index";
 
 type Updating = Pick<UpdatePkg, "name" | "version">;
 
@@ -22,6 +22,16 @@ export const usePackageStore = defineStore("package", {
       // 正在升级的依赖
       updating: {},
     };
+  },
+  getters: {
+    // 当前系统有哪些管理工具
+    managerData(state): Env[] {
+      const npms = [EnvType.Npm, EnvType.Pnpm, EnvType.Yarn].filter(
+        (key) => state.env[key]
+      );
+
+      return npms.map(key => state.env[key]) as Env[];
+    }
   },
   actions: {
     updateUpdating(name: string, payload: Partial<Updating> | null) {
@@ -65,23 +75,23 @@ export const usePackageStore = defineStore("package", {
      * 批量升级依赖
      *
      */
-    batchUpdatePackage(params: UpdatePkg[]) {
+    batchUpdatePackage(params: BatchUpdate) {
       const appStore = useAppStore();
 
-      this.updateBatchUpdating(params);
+      this.updateBatchUpdating(params.data);
       return new Promise((resolve, reject) => {
-        ajax.post<string[], UpdatePkg[]>("/api/pkg/batchUpdate", params).then(
+        ajax.post<string[], BatchUpdate>("/api/pkg/batchUpdate", params).then(
           (res) => {
-            this.updateBatchUpdating(params, false);
+            this.updateBatchUpdating(params.data, false);
             if (res.success) {
               // ElMessage.success("依赖安装更新成功!");
               // 升级成功的需要清除之前缓存的依赖关系图
               res.data.forEach((name) => {
-                appStore.updateRelationPkg({ name, relation: null });
+                appStore.updateRelationPkg({ name });
               });
               ElNotification({
                 type: "success",
-                message: `成功安装依赖${res.data.length}个，失败${params.length - res.data.length}个，详情查看升级日志！`,
+                message: `成功安装依赖${res.data.length}个，失败${params.data.length - res.data.length}个，详情查看升级日志！`,
               });
               resolve(res);
             } else {
@@ -92,7 +102,7 @@ export const usePackageStore = defineStore("package", {
           (e) => {
             ElMessage.error("接口调用失败!");
             console.error(e);
-            this.updateBatchUpdating(params, false);
+            this.updateBatchUpdating(params.data, false);
             reject();
           }
         );
