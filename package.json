@@ -1,6 +1,6 @@
 {
   "name": "rsup-web",
-  "version": "0.1.1",
+  "version": "0.5.1",
   "description": "rsup's web page",
   "main": "",
   "type": "module",
@@ -9,6 +9,7 @@
     "build": "vite build",
     "lint": "eslint",
     "commitlint": "commitlint --edit",
+    "release": "npx bumpp",
     "prepare": "husky"
   },
   "author": "",
