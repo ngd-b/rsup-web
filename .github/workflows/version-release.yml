@@ -2,8 +2,8 @@ name: version release
 
 on:
   push:
-    branches: main
-    tags: "*"
+    # branches: main
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: checkout git code
         uses: actions/checkout@v4
-      - name: setup node and use ndoe 20
+      - name: setup node and use node 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -42,12 +42,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: create github release
+      - name: create github latest release
         id: new_release
         uses: softprops/action-gh-release@v2.0.8
         with:
           tag_name: latest
-          # name: ${{github.ref_name}}
-          # make_latest: true
           files: |
             rsup-web.tar.gz
+      - name: create github latest tag release
+        id: new_tag_release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          name: ${{github.ref_name}}
+          make_latest: true
